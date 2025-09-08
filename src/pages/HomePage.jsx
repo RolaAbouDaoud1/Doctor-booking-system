@@ -1,7 +1,8 @@
-import Navbar from "../components/Navbar";
 import img from "../assets/LandingImage.webp";
-import SearchBar from "../components/SearchBar";
 import FindDoctors from "../components/FindDoctors";
+import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
+import WhyChooseUs from "../components/WhyChooseUs";
 export default function HomePage() {
   const joinButtons = [
     {
@@ -14,10 +15,11 @@ export default function HomePage() {
     },
   ];
   /*Function that creates and return II buttons based on given args #2iTEMS*/
-  const createButton = (role, styling) => {
+  const createButton = (role, styling, index) => {
     return (
       <div
         className={`rounded-lg p-2 w-1/3 text-center text-xs ${styling} font-bold rounded-xl`}
+        key={index}
       >
         Join as {role}
       </div>
@@ -42,16 +44,20 @@ export default function HomePage() {
           <span> manage your healthcare journey with ease</span>
         </p>
 
-        <div className="flex flex-col items-center justify-center mt-5   gap-3 border-1 border-gray-300 py-4 rounded-2xl w-10/12 mx-auto  ">
+        <div className="flex flex-col items-center justify-center mt-5   gap-3 border-1 border-gray-300 py-4 rounded-2xl w-10/12 mx-auto bg-white  ">
           <SearchBar />
           <FindDoctors />
         </div>
 
         <div className="flex flex-row items-center justify-around mt-2 w-full">
-          {joinButtons.map((individual) => {
-            return createButton(individual.role, individual.styling);
+          {joinButtons.map((individual, index) => {
+            return createButton(individual.role, individual.styling, index);
           })}
         </div>
+        <h1 className="mt-7 font-semibold text-xl">
+          Why choose HealthConnect?
+        </h1>
+        <WhyChooseUs />
       </div>
     </div>
   );
