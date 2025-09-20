@@ -24,3 +24,222 @@
 .bg-color {
   background-color: #edf6f9;
 }
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-down {
+  animation: slideDown 0.5s ease-out;
+}
+
+/* CSS Variables */
+:root {
+  --teal: #006d77;
+  --teal-hover: #005963;
+  --teal-light: #e6f3f4;
+  --mint: #83c5be;
+  --mint-hover: #6fb8b1;
+  --ivory: #edf6f9;
+  --coral: #e29578;
+  --coral-hover: #d67f5f;
+  --slate: #2f3e46;
+  --slate-light: #495057;
+  --muted: #6b7a7b;
+  --white: #ffffff;
+  --shadow-light: 0 3px 8px rgba(47, 62, 70, 0.06);
+  --shadow-medium: 0 6px 18px rgba(47, 62, 70, 0.12);
+  --shadow-heavy: 0 10px 30px rgba(47, 62, 70, 0.2);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 12px;
+}
+
+/* Notification Area Container */
+.notif-area {
+  caret-color: transparent;
+  position: relative;
+  z-index: 101;
+  flex-shrink: 0;
+}
+
+/* Notification Button */
+
+.notif-btn {
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Shimmer effect on button */
+
+/* Remove shimmer effect */
+
+/* Button hover states */
+
+.notif-btn:hover {
+  transform: scale(1.1);
+}
+
+.notif-btn:active {
+  transform: scale(0.98);
+}
+
+    
+/* Notification Badge */
+
+.notif-badge {
+  caret-color: transparent;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--coral);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 10px;
+  min-width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--white);
+  z-index: 102;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  caret-color: transparent;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 12px;
+  min-width: 240px;
+  max-width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-heavy);
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.5s ease;
+}
+
+/* Dropdown slide animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown header */
+.dropdown-menu h4 {
+  caret-color: transparent;
+  margin: 0 0 12px 0;
+  color: var(--slate);
+  font-size: 14px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(47, 62, 70, 0.08);
+}
+
+/* Dropdown list */
+.dropdown-menu ul {
+  caret-color: transparent;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown-menu li {
+  caret-color: transparent;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--slate);
+  border-bottom: 1px solid rgba(47, 62, 70, 0.05);
+}
+
+.dropdown-menu li:last-child {
+  border-bottom: none;
+}
+
+/* Muted text for empty state */
+.muted {
+  caret-color: transparent;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Mobile responsive */
+@media (max-width: 500px) {
+  .dropdown-menu {
+    right: 0;
+    max-width: 90vw;
+    z-index: 99999;
+    position: fixed;
+    top: 120px;
+  }
+}
+
+/*bright*/
+:root {
+  --teal: #006d77;
+  --teal-hover: #005963;
+  --teal-light: #e6f3f4;
+  --mint: #83c5be;
+  --mint-hover: #6fb8b1;
+  --ivory: #edf6f9;
+  --coral: #e29578;
+  --coral-hover: #d67f5f;
+  --slate: #2f3e46;
+  --slate-light: #495057;
+  --muted: #6b7a7b;
+  --white: #ffffff;
+  --shadow-light: 0 3px 8px rgba(47, 62, 70, 0.06);
+  --shadow-medium: 0 6px 18px rgba(47, 62, 70, 0.12);
+  --shadow-heavy: 0 10px 30px rgba(47, 62, 70, 0.2);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 12px;
+}
+
+/* dark */
+:root[data-theme="dark"] {
+  --teal: #4dd0e1; /* lighter cyan-teal for contrast */
+  --teal-hover: #26c6da; /* bright hover */
+  --teal-light: #083d43; /* deep teal background shade */
+
+  --mint: #9ee8de; /* softer mint that stands out */
+  --mint-hover: #7ad9ce;
+
+  --ivory: #1e2528; /* dark background instead of ivory */
+
+  --coral: #ff9e84; /* coral but with more brightness */
+  --coral-hover: #ff7d5e;
+
+  --slate: #121417; /* near-black background */
+  --slate-light: #2a3339; /* card / secondary backgrounds */
+
+  --muted: #a0a7aa; /* lighter gray for text */
+  --white: #e9f1f3; /* off-white text color */
+
+  --shadow-light: 0 3px 8px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.6);
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 12px;
+}
