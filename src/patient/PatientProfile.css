@@ -1,0 +1,197 @@
+/* Page */
+.patient-profile-page {
+  background: #edf6f9;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1600px;
+  margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+  font-size: 1.5rem;
+  color: #2f3e46;
+}
+
+.back-button {
+  background: #83c5be;
+  border: none;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: white;
+}
+
+.back-button:hover { background: #68a9a2; }
+
+/* Profile Content Wrapper */
+.profile-content {
+  display: flex;
+  flex-direction: column; /* mobile by default */
+  width: 100%;
+  max-width: 1600px;
+  gap: 2rem;
+}
+
+/* Profile Card */
+.profile-card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.profile-avatar {
+  width: 4rem;
+  height: 4rem;
+  background: #006d77;
+  color: white;
+  font-weight: bold;
+  font-size: 1.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+/* Edit Inputs */
+.edit-input {
+  width: 100%;
+  margin: 0.3rem 0;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Buttons */
+.edit-button, .save-button, .cancel-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+}
+
+.edit-button { background: #e29578; color: white; }
+.save-button { background: #006d77; color: white; }
+.cancel-button { background: #e29578; color: white; font-size: 0.8rem; }
+
+.edit-button:hover { background: #cc7f65; }
+.save-button:hover { background: #004f55; }
+.cancel-button:hover { background: #cc7f65; }
+
+/* History Section */
+.history-section { width: 100%; }
+
+.history-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.history-icon {
+  background: #edf6f9;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Status */
+.status {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.status.completed { background: #d1fae5; color: #065f46; }
+.status.scheduled { background: #fff3cd; color: #856404; }
+.status.cancelled { background: #f8d7da; color: #842029; }
+
+/* Desktop Layout */
+@media screen and (min-width: 1024px) {
+  .profile-content {
+    flex-direction: row; /* profile + history side by side */
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1400px; /* limit content width */
+    margin: 0 auto; /* center on big screens */
+  }
+
+  .profile-card {
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .history-section {
+    flex: 2;
+  }
+
+  .history-card {
+    flex-direction: row; /* icon + info side by side */
+    align-items: center;
+  }
+
+  .history-icon {
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+
+  .history-info {
+    text-align: left;
+  }
+}
+
+
+/* On large screens (≥1024px), expand even more */
+@media (min-width: 1024px) {
+    .patient-profile-page {
+    padding: 4rem 2rem;
+  }
+
+  .profile-content {
+    max-width: 1600px; /* keep content from stretching too much */
+  }
+
+  .profile-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .profile-card h2 {
+    font-size: 2rem;
+  }
+
+  .edit-input {
+    font-size: 1.1rem;
+  }
+
+  .history-card {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
