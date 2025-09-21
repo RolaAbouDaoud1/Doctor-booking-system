@@ -5,10 +5,9 @@ import FindDoctors from "../components/FindDoctors";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import WhyChooseUs from "../components/WhyChooseUs";
-export default function HomePage({ darkMode, setDarkMode }) {
+export default function HomePage({ darkMode, setDarkMode,showDropList,setShowDropList }) {
   // Please note that the Documentation is done with no help of AI tools
   // For any issues contact me directly
-  const [showDropList, setShowDropList] = React.useState(false);
   const joinButtons = [
     {
       role: "Patient",

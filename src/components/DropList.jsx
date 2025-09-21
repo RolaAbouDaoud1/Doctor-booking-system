@@ -1,9 +1,10 @@
 import { Activity, ChevronRight, House, User } from "lucide-react";import { ClipboardClock } from 'lucide-react';
+import {Link} from "react-router"
 export default function DropList({setShowDropList}) {
   const DropListData = [
-    { icon: House, role: "Home" },
+    { icon: House, role: "Home", },
     { icon: ClipboardClock, role: "My Appointments" },
-    { icon: Activity, role: "Search For A Doctor" },
+    { icon: Activity, role: "Search For A Doctor",link:"/search" },
     { icon: User, role: "My Profile" },
   ];
 
@@ -11,6 +12,7 @@ export default function DropList({setShowDropList}) {
     <div className="absolute inset-0 z-20 pt-20 backdrop-blur-md ">
       {DropListData.map((item, index) => {
         return (
+          <Link to={item.link}>
           <div
            className=" animate-down flex items-center justify-between p-4 font-medium border-b border-neutral-800/50 last:border-b-0"
              onClick={() => setShowDropList(false)}
@@ -29,7 +31,7 @@ export default function DropList({setShowDropList}) {
               size={16}
               className="text-neutral-500 transition-colors"
             />
-          </div>
+          </div></Link>
         );
       })}
     </div>

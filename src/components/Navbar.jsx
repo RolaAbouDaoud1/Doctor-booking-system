@@ -1,5 +1,6 @@
 import { Menu, Moon, Sun } from "lucide-react";
 import { NotificationSystem } from "./NotificationSystem";
+import DropList from "./DropList";
 export default function Navbar({
   setShowDropList,
   showDropList,
@@ -7,7 +8,8 @@ export default function Navbar({
   darkMode,
 }) {
   return (
-    <div className="w-full fixed z-30 pt-2">
+    <>
+    <div className="w-full fixed z-100 pt-2">
       <div className="  flex flex-row justify-between items-center mx-4">
         <h1
           className={`${
@@ -37,5 +39,10 @@ export default function Navbar({
         </div>
       </div>
     </div>
+      {showDropList && (
+            <DropList setShowDropList={setShowDropList} darkMode={darkMode} />
+          )}
+     
+    </>
   );
 }
