@@ -1,0 +1,269 @@
+
+:root{
+    --mainbuts: #006D77;
+    --bg-highlights:#83C5BE ;
+    --mainBg:#EDF6F9 ;
+    --secondaryAction:#E29578;
+    --text-labels: #2F3E46;
+}
+.login-container{
+    background-color: var(--mainBg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+.head{
+    width: 100%;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    gap:30px;
+}
+.back-btn{
+    background-color: var(--bg-highlights);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    color: white; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+.goback{
+    background: none;
+    border: none;
+    width: 50px;
+    height: 50px;
+}
+.back-btn:hover, .signin-btn:hover{
+    background-color:#004f56;
+}
+.login-title{
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--mainbuts);
+}
+.role-section ,form{
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    margin: 10px;
+}
+.iam{
+    color: var(--text-labels);
+    font-weight: 700;
+}
+.role-buts,.signin-btn, .create{
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: center;
+}
+.role-buts button, .signin-btn, .create{
+    cursor: pointer;
+    text-align: center;
+    padding: 20px;
+    border: none;
+    border-radius: 20px;
+    width: 350px;
+    color: var(--text-labels);
+    background-color: var(--mainBg);
+}
+.role-buts .active , .signin-btn{
+    background-color: var(--mainbuts);
+    color: white;
+}
+form,.patient-section,.doctor-section{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.title{
+    color: var(--mainbuts);
+    font-weight: 700;
+}
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.form-group label{
+    color: var(--text-labels);
+    font-weight: 700;
+}
+.input-field{
+    border: none;
+    border-radius: 30px;
+    padding: 30px;
+    background-color: var(--mainBg);
+}
+.label-radio{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    background-color: var(--mainBg);
+    padding: 30px;
+    border-radius: 30px;
+}
+input[type="radio"]{
+    accent-color: #4CAF50;
+}
+.password-wrapper{
+    position: relative;
+    width: 100%;
+}
+.password-wrapper .input-field{
+    width: 100%;
+    padding-right:40px ;
+    box-sizing: border-box;
+}
+.password-wrapper .eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 30px; 
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+.forgot{
+    text-align: right;
+}
+.forgotpass{
+    color: var(--text-labels);
+    font-weight: 700;
+}
+.signin-btn, .create{
+    justify-self: center;
+    transition: all 0.3s ease-in-out;
+}
+.signup-text, .signup-text a{
+    color: var(--text-labels);
+}
+.reset-text{
+    color: var(--mainbuts);
+    font-weight: 700;
+}
+.error{
+    color: red ;
+    font-size: 0.8rem;
+    margin-top: 10px ;
+}
+.error-border {
+  border: 1px solid red !important;
+}
+.create{
+    background-color: var(--mainbuts);
+    color:white;
+}
+.create:hover{
+    background-color:#004f56;
+}
+.add{
+    cursor: pointer;
+    text-align: center;
+    padding: 20px;
+    border: none;
+    border-radius: 20px;
+    width: 150px;
+    color: white;
+    background-color: var(--mainbuts);
+}
+.list{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    list-style-type:none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    overflow-x: scroll;
+}
+.fa-x{
+    color: var(--mainbuts);
+    font-size: 1.3rem;
+}
+.delete{
+    background-color: var(--bg-highlights);
+    padding: 10px;
+    border: var(--bg-highlights);
+    border-radius: 20px;
+    cursor: pointer;
+    scale: 0.6;
+}
+
+/* Responsive styles for desktop */
+@media screen and (min-width: 1024px) {
+    
+   .login-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 10px;                       
+  }
+
+  .head {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .role-section {
+    margin-bottom: 30px;
+    width: 80%;
+  }
+  .role-buts{
+    width: 70%;
+    align-self: center;
+  }
+  form {
+    width: 80%;
+  }
+  .title{
+    padding-left: 30px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+    padding-left: 30px;
+  }
+  .input-field{
+    width: 80%;
+  }
+   .password-wrapper{
+    width: 86%;
+   }
+  .signin-btn {
+    width: 50%;
+    padding: 14px;
+    font-size: 1.1rem;
+  }
+
+  .signup-text {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .forgotpass{
+    margin-right: 50px;
+  }
+  .iam{
+    font-size:larger;
+  }
+  .label-radio{
+    width: 80%;
+  }
+  .add{
+    scale: 0.9;
+  }
+}
