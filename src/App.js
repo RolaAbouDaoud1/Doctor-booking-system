@@ -1,8 +1,6 @@
 import './App.css';
-import LoginPage from "./loginPage";
-import ForgotPassword from './forgotPassword';
-import SignUp from './signUp';
-import LandingPage from "./HomePage";
+import LoginPage from './pages/Login';
+import Register from './pages/Register';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -10,9 +8,7 @@ function App() {
       <Router>
          <Routes>
             <Route path="/" element={<LoginPage/>}/>
-            <Route path="/forgotPassword" element={<ForgotPassword/>} />
-            <Route path="/signUp" element={<SignUp/>} />
-            <Route path="/HomePage" element={<LandingPage />} />
+            <Route path="/register" element={<Register/>}/>
          </Routes>
       </Router>
    );
