@@ -1,3 +1,129 @@
+  /* Removed unsupported @custom-variant dark (&:is(.dark *)); */
+
+:root {
+  /* HealthConnect Original Theme - Light Mode */
+  --background: #edf6f9;
+  --foreground: #2f3e46;
+  --card: #ffffff;
+  --card-foreground: #2f3e46;
+  --popover: #ffffff;
+  --popover-foreground: #2f3e46;
+  --primary: #006d77;
+  --primary-foreground: #ffffff;
+  --secondary: #e29578;
+  --secondary-foreground: #ffffff;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #83c5be;
+  --accent-foreground: #2f3e46;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #006d77;
+  --chart-1: #006d77;
+  --chart-2: #83c5be;
+  --chart-3: #e29578;
+  --chart-4: #2f3e46;
+  --chart-5: #edf6f9;
+  --radius: 0.625rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #2f3e46;
+  --sidebar-primary: #006d77;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8fafc;
+  --sidebar-accent-foreground: #2f3e46;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #006d77;
+}
+
+.dark {
+  /* HealthConnect Original Theme - Dark Mode */
+  --background: #006d77;
+  --foreground: #ffffff;
+  --card: #2f3e46;
+  --card-foreground: #ffffff;
+  --popover: #2f3e46;
+  --popover-foreground: #ffffff;
+  --primary: #83c5be;
+  --primary-foreground: #2f3e46;
+  --secondary: #e29578;
+  --secondary-foreground: #ffffff;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #83c5be;
+  --accent-foreground: #2f3e46;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #334155;
+  --input: #334155;
+  --ring: #83c5be;
+  --chart-1: #83c5be;
+  --chart-2: #e29578;
+  --chart-3: #006d77;
+  --chart-4: #ffffff;
+  --chart-5: #2f3e46;
+  --sidebar: #2f3e46;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #83c5be;
+  --sidebar-primary-foreground: #2f3e46;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #334155;
+  --sidebar-ring: #83c5be;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Added original HealthConnect custom CSS classes */
 /*light teal*/
 .bg-light-teal {
   background-color: #83c5be;
@@ -25,6 +151,7 @@
   background-color: #edf6f9;
 }
 
+/* Custom animations for HealthConnect */
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
@@ -36,8 +163,31 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .animate-down {
   animation: slideDown 0.5s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Updated grid pattern to use original teal color */
+/* Grid pattern background */
+.grid-pattern {
+  background-image: linear-gradient(rgba(0, 109, 119, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 109, 119, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* CSS Variables */
