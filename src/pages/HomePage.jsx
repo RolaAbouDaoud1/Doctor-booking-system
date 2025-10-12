@@ -15,7 +15,7 @@ export default function HealthConnectLanding({showDropList,setShowDropList}) {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
-
+localStorage.getItem("isLoggedIn")
 
   useEffect(() => {
     // Check for saved dark mode preference or system preference
@@ -78,7 +78,6 @@ export default function HealthConnectLanding({showDropList,setShowDropList}) {
                 </div>
               </div>
             </div>
-
             {/* Hero Text */}
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-6xl font-bold text-balance">
