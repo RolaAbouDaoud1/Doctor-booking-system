@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 export default function CTASection() {
   return (
@@ -10,12 +11,12 @@ export default function CTASection() {
         HealthConnect for their medical needs.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button className="px-6 py-3 bg-[#E29578] hover:bg-[#E29578]/90 text-white rounded-md transition-colors">
+        <Link to="/login" className="px-6 py-3 bg-[#E29578] hover:bg-[#E29578]/90 text-white rounded-md transition-colors">
           Get Started Today
-        </button>
-        <button className="px-6 py-3 border-2 border-white text-white hover:bg-white hover:text-teal bg-transparent rounded-md transition-colors">
+        </Link>
+        <Link to="/login" className="px-6 py-3 border-2 border-white text-white hover:bg-white hover:text-teal bg-transparent rounded-md transition-colors">
           Learn More
-        </button>
+        </Link>
       </div>
     </div>
   );
