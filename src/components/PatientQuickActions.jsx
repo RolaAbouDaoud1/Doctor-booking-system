@@ -12,7 +12,7 @@ const PatientQuickActions = () => {
 
   const wellnessActions = useMemo(() => [
     {
-      id: 'hydration',
+      id: 'hydration ',
       icon: '💧',
       title: 'Hydration',
       subtitle: 'Drink water now',
