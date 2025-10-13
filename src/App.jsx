@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import PatientDashboard from "./pages/PatientDashboard";
 import "./App.css";
 import DoctorSearchPage from "./pages/DoctorSearchPage";
 import HomePage from "./pages/HomePage";
@@ -36,6 +38,8 @@ function App() {
               />
             }
           />
+<Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+        <Route path="/patient-dashboard" element={<PatientDashboard />} />
         </Routes>
       </Router>
     </>
