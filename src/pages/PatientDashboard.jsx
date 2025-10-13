@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import PatientOverviewStats from "../components/PatientOverviewStats";
 import PatientQuickActions from "../components/PatientQuickActions";
 import Modal from "../components/Modal";
+import './SharedDashboard.css';      
+import './WellnessModal.css';         
 import "./PatientDashboard.css";
 
 const API_BASE = 'http://localhost:8080/api';

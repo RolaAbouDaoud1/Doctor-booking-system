@@ -5,6 +5,8 @@ import DoctorQuickActions from "../components/DoctorQuickActions";
 import DoctorAppointmentsManager from "../components/DoctorAppointmentsManager";
 import Modal from "../components/Modal";
 import RescheduleModal from "../Components/ReschedualModal";
+import "./SharedDashboard.css";     
+import "./WellnessModal.css";
 import "./DoctorDashboard.css";
 
 const API_BASE = 'http://localhost:8080/api';

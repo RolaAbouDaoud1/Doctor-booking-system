@@ -164,7 +164,6 @@ const PatientQuickActions = () => {
       timer = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            // Move to next phase or complete
             if (currentPhase < activeAction.phases.length - 1) {
               setCurrentPhase(prevPhase => prevPhase + 1);
               return activeAction.phases[currentPhase + 1].duration;
@@ -294,7 +293,6 @@ const PatientQuickActions = () => {
                     </div>
                   </div>
                   
-                  {/* Progress Bar */}
                   <div className="progress-bar" style={{ margin: '1rem 0', height: '6px', background: '#e2e8f0', borderRadius: '3px' }}>
                     <div 
                       className="progress-fill" 
@@ -362,16 +360,13 @@ const PatientQuickActions = () => {
         <h3 className="section-title">⚡ Quick Actions</h3>
 
         <section className="quick-actions">
-          <button className="action-btn bg-teal" onClick={() => handleNavigation("/booking-appointment")}>
-            📅 Book Appointment
-          </button>
-
-          <button className="action-btn bg-light-teal" onClick={() => handleNavigation("/search-doctor")}>
-            🔍 Find Doctors
+          <button className="btn main" onClick={() => handleNavigation("/search-doctor")}>
+            <span className="btn-icon">🔍</span>
+            Find Doctors
           </button>
 
           <button 
-            className="action-btn wellness-btn" 
+            className="btn coral wellness-btn" 
             onClick={() => setShowWellnessHub(true)}
           >
             <div className="wellness-btn-content">
@@ -383,8 +378,9 @@ const PatientQuickActions = () => {
             </div>
           </button>
 
-          <button className="action-btn bg-gray" onClick={() => handleNavigation("/patient-profile")}>
-            👤 My Profile
+          <button className="btn mint" onClick={() => handleNavigation("/patient-profile")}>
+            <span className="btn-icon">👤</span>
+            My Profile
           </button>
         </section>
       </div>

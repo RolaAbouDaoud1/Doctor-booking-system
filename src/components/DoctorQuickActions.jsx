@@ -354,13 +354,13 @@ const DoctorQuickActions = ({ onNavigate }) => {
       <div className="quick-actions-card">
         <h3 className="section-title">⚡ Quick Actions</h3>
         <section className="quick-actions">
-          <button className="btn main" onClick={() => onNavigate("/doctor-profile")}>
-            <span className="btn-icon">👨‍⚕️</span>
-            Update Profile
+        <button className="btn mint" onClick={() => onNavigate("/doctor-search")}>
+            <span className="btn-icon">🔍</span>
+            Find Colleagues
           </button>
           
           <button 
-            className="btn wellness-btn" 
+            className="btn coral wellness-btn" 
             onClick={() => setShowWellnessHub(true)}
           >
             <div className="wellness-btn-content">
@@ -371,10 +371,9 @@ const DoctorQuickActions = ({ onNavigate }) => {
               )}
             </div>
           </button>
-
-          <button className="btn coral" onClick={() => onNavigate("/doctor-search")}>
-            <span className="btn-icon">🔍</span>
-            Find Colleagues
+            <button className="btn main" onClick={() => onNavigate("/doctor-profile")}>
+            <span className="btn-icon">👨‍⚕️</span>
+            Update Profile
           </button>
         </section>
       </div>
