@@ -1,16 +1,49 @@
-import React from "react";
-import{ BrowserRouter as Router,Routes, Route} from "react-router-dom";
+import { useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
-
-function App(){
+import "./App.css";
+import DoctorSearchPage from "./pages/DoctorSearchPage";
+import HomePage from "./pages/HomePage";
+function App() {
+  const [showDropList, setShowDropList] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [role, setRole] = useState("Doctor");
+  localStorage.setItem("loggedIn", loggedIn);
+  localStorage.setItem("role", role);
   return (
-    <Router>
-      <Routes>
-        <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+    <>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                showDropList={showDropList}
+                setShowDropList={setShowDropList}
+              />
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <DoctorSearchPage
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                setShowDropList={setShowDropList}
+                showDropList={showDropList}
+              />
+            }
+          />
+<Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/patient-dashboard" element={<PatientDashboard />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </>
   );
 }
+
 export default App;
