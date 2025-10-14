@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DoctorAppointmentsManager from "../components/DoctorAppointmentsManager";
 import DoctorOverviewStats from "../components/DoctorOverviewStats";
 import DoctorQuickActions from "../components/DoctorQuickActions";
-import DoctorAppointmentsManager from "../components/DoctorAppointmentsManager";
 import Modal from "../components/Modal";
 import RescheduleModal from "../Components/ReschedualModal";
-import "./SharedDashboard.css";     
-import "./WellnessModal.css";
+import NavBarLg from "../components/sections/NavBarLg";
 import "./DoctorDashboard.css";
+import "./SharedDashboard.css";
+import "./WellnessModal.css";
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -318,6 +319,8 @@ const DoctorDashboard = () => {
   }, [now]);
 
   return (
+    <>
+    <NavBarLg/>
     <div className="dashboard">
       <div className="dashboard-header">
         <div>
@@ -377,7 +380,7 @@ const DoctorDashboard = () => {
         onDateChange={(e) => setRescheduleModal(prev => ({...prev, newDate: e.target.value}))}
         onTimeChange={(e) => setRescheduleModal(prev => ({...prev, newTime: e.target.value}))}
       />
-    </div>
+    </div></>
   );
 };
 

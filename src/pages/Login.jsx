@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./design.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import NavBarLg from "../components/sections/NavBarLg";
+import "./design.css";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -79,6 +80,7 @@ export default function LoginPage() {
   };
 
   return (
+    <><NavBarLg/>
     <div className="login-container">
       <div className="head">
         <button className="goback">
@@ -141,6 +143,6 @@ export default function LoginPage() {
       <p className="signup-text">
         Don't have an account?<Link to="/register">Sign Up</Link>
       </p>
-    </div>
+    </div></>
   );
 }

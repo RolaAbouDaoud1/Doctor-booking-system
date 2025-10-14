@@ -1,11 +1,11 @@
-import { useState  } from "react";
+import { useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import DoctorDashboard from "./pages/DoctorDashboard";
-import PatientDashboard from "./pages/PatientDashboard";
 import "./App.css";
+import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorSearchPage from "./pages/DoctorSearchPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/Login";
+import PatientDashboard from "./pages/PatientDashboard";
 import Register from './pages/Register';
 
 function App() {

@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Modal from "../components/Modal";
 import PatientOverviewStats from "../components/PatientOverviewStats";
 import PatientQuickActions from "../components/PatientQuickActions";
-import Modal from "../components/Modal";
-import './SharedDashboard.css';      
-import './WellnessModal.css';         
+import NavBarLg from "../components/sections/NavBarLg";
 import "./PatientDashboard.css";
+import './SharedDashboard.css';
+import './WellnessModal.css';
 
 const API_BASE = 'http://localhost:8080/api';
 
@@ -301,6 +302,8 @@ const PatientDashboard = () => {
   });
 
   return (
+    <>
+    <NavBarLg/>
     <div className="dashboard bg-color">
       <div className="header">
         <div>
@@ -394,7 +397,7 @@ const PatientDashboard = () => {
           onCancel={closeModal}
         />
       )}
-    </div>
+    </div></>
   );
 };
 

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
-import "./design.css";
-import RegisterPatient from "../components/register-patient";
-import RegisterDoctor from "../components/register-doctor";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import RegisterDoctor from "../components/register-doctor";
+import RegisterPatient from "../components/register-patient";
+import NavBarLg from "../components/sections/NavBarLg";
+import "./design.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -143,7 +144,6 @@ export default function Register() {
       valid = false;
     }
 
-
     if (role === "Patient") {
       if (!patientData.dateOfBirth) {
         newPatientErrors.dateOfBirth = "Date of birth is required";
@@ -215,7 +215,7 @@ export default function Register() {
     const url =
       role === "Patient"
         ? `${baseUrl}/api/v1/auth/register-patient`
-        : `${baseUrl}/api/v1/auth/register-doctor;`
+        : `${baseUrl}/api/v1/auth/register-doctor;`;
 
     try {
       const response = await fetch(url, {
@@ -238,7 +238,7 @@ export default function Register() {
       }
 
       if (!response.ok) {
-        throw new Error(HTTP `${response.status}: ${text}`);
+        throw new Error(HTTP`${response.status}: ${text}`);
       }
 
       console.log("Registration successful:", result);
@@ -264,112 +264,116 @@ export default function Register() {
   };
 
   return (
-    <div className="login-container">
-      <div className="head">
-        <button className="goback">
-          <Link to="/" className="back-btn">
-            &larr;
-          </Link>
-        </button>
-        <h1 className="login-title">Create Account</h1>
-      </div>
-
-      <div className="role-section">
-        <p className="iam">Join as:</p>
-        <div className="role-buts">
-          <button
-            type="button"
-            className={role === "Patient" ? "active" : ""}
-            onClick={() => setRole("Patient")}
-          >
-            Patient
+    <>
+      <NavBarLg />
+      <div className="login-container">
+        <div className="head">
+          <button className="goback">
+            <Link to="/" className="back-btn">
+              &larr;
+            </Link>
           </button>
-          <button
-            type="button"
-            className={role === "Doctor" ? "active" : ""}
-            onClick={() => setRole("Doctor")}
-          >
-            Doctor
-          </button>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <h1 className="title">Basic Information</h1>
-
-        {/* Name */}
-        <div className="form-group">
-          <label>Username</label>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={name}
-            className="input-field"
-            onChange={(e) => setName(e.target.value)}
-          />
-          {nameError && <p className="error">{nameError}</p>}
+          <h1 className="login-title">Create Account</h1>
         </div>
 
-        {/* Full Name */}
-        <div className="form-group">
-          <label>Full Name</label>
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            value={fullName}
-            className="input-field"
-            onChange={(e) => setFullName(e.target.value)}
-          />
-          {fullNameError && <p className="error">{fullNameError}</p>}
-        </div>
-
-        {/* Email */}
-        <div className="form-group">
-          <label>Email Address</label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            className="input-field"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {emailError && <p className="error">{emailError}</p>}
-        </div>
-
-        {/* Password */}
-        <div className="form-group">
-          <label>Password</label>
-          <div className="password-wrapper">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              className={`input-field ${passwordError ? "error-border" : ""}`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <i
-              className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"} eye-icon`}
-              onClick={() => setShowPassword(!showPassword)}
-            ></i>
-            {passwordError && <p className="error">{passwordError}</p>}
+        <div className="role-section">
+          <p className="iam">Join as:</p>
+          <div className="role-buts">
+            <button
+              type="button"
+              className={role === "Patient" ? "active" : ""}
+              onClick={() => setRole("Patient")}
+            >
+              Patient
+            </button>
+            <button
+              type="button"
+              className={role === "Doctor" ? "active" : ""}
+              onClick={() => setRole("Doctor")}
+            >
+              Doctor
+            </button>
           </div>
         </div>
 
-        {/* Phone */}
-        <div className="form-group">
-          <label>Phone Number</label>
-          <input
-            type="number"
-            placeholder="Enter your phone number"
-            className="input-field"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          {phoneError && <p className="error">{phoneError}</p>}
-        </div>
+        <form onSubmit={handleSubmit}>
+          <h1 className="title">Basic Information</h1>
 
-        {/* Avatar */}
-        {/* <div className="form-group">
+          {/* Name */}
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              placeholder="Enter your username"
+              value={name}
+              className="input-field"
+              onChange={(e) => setName(e.target.value)}
+            />
+            {nameError && <p className="error">{nameError}</p>}
+          </div>
+
+          {/* Full Name */}
+          <div className="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              placeholder="Enter your full name"
+              value={fullName}
+              className="input-field"
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            {fullNameError && <p className="error">{fullNameError}</p>}
+          </div>
+
+          {/* Email */}
+          <div className="form-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              className="input-field"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailError && <p className="error">{emailError}</p>}
+          </div>
+
+          {/* Password */}
+          <div className="form-group">
+            <label>Password</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className={`input-field ${passwordError ? "error-border" : ""}`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <i
+                className={`fas ${
+                  showPassword ? "fa-eye-slash" : "fa-eye"
+                } eye-icon`}
+                onClick={() => setShowPassword(!showPassword)}
+              ></i>
+              {passwordError && <p className="error">{passwordError}</p>}
+            </div>
+          </div>
+
+          {/* Phone */}
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input
+              type="number"
+              placeholder="Enter your phone number"
+              className="input-field"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            {phoneError && <p className="error">{phoneError}</p>}
+          </div>
+
+          {/* Avatar */}
+          {/* <div className="form-group">
           <label>Avatar URL</label>
           <input
             type="text"
@@ -381,53 +385,54 @@ export default function Register() {
           {avatarError && <p className="error">{avatarError}</p>}
         </div> */}
 
-        {/* Gender */}
-        <div className="form-group">
-          <label>Gender</label>
-          <div className="label-radio">
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="Male"
-                checked={Gender === "Male"}
-                onChange={(e) => setGender(e.target.value)}
-              />{" "}
-              Male
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="Female"
-                checked={Gender === "Female"}
-                onChange={(e) => setGender(e.target.value)}
-              />{" "}
-              Female
-            </label>
+          {/* Gender */}
+          <div className="form-group">
+            <label>Gender</label>
+            <div className="label-radio">
+              <label>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Male"
+                  checked={Gender === "Male"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Male
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Female"
+                  checked={Gender === "Female"}
+                  onChange={(e) => setGender(e.target.value)}
+                />{" "}
+                Female
+              </label>
+            </div>
           </div>
-        </div>
 
-        {/* Role-specific form */}
-        {role === "Patient" && (
-          <RegisterPatient
-            data={patientData}
-            setData={setPatientData}
-            errors={patientErrors}
-          />
-        )}
-        {role === "Doctor" && (
-          <RegisterDoctor
-            data={doctorData}
-            setData={setDoctorData}
-            errors={doctorErrors}
-          />
-        )}
+          {/* Role-specific form */}
+          {role === "Patient" && (
+            <RegisterPatient
+              data={patientData}
+              setData={setPatientData}
+              errors={patientErrors}
+            />
+          )}
+          {role === "Doctor" && (
+            <RegisterDoctor
+              data={doctorData}
+              setData={setDoctorData}
+              errors={doctorErrors}
+            />
+          )}
 
-        <button type="submit" className="create">
-          Create Account
-        </button>
-      </form>
-    </div>
+          <button type="submit" className="create">
+            Create Account
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

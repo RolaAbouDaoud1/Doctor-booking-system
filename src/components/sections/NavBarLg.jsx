@@ -1,5 +1,4 @@
-import { Activity, ChevronRight, House, User } from "lucide-react";
-import { LayoutDashboard } from 'lucide-react';
+import { Activity, ChevronRight, House, LayoutDashboard, User } from "lucide-react";
 import { Link } from "react-router-dom";
 export default function NavBarLg({
   darkMode,
@@ -9,7 +8,8 @@ export default function NavBarLg({
 }) {
   const navPatientLg = [
     { text: "Home", icon: House, link: "/" },
-    { text: "My Dashboard", icon: LayoutDashboard, link: "/dashboard" },
+    { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
+    { text: " Doctors Dashboard", icon: Activity, link: "/doctor-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
     { text: "Sign in", icon: User, link: "/login" },
   ];
