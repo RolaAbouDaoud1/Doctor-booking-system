@@ -360,7 +360,7 @@ const PatientQuickActions = () => {
         <h3 className="section-title">⚡ Quick Actions</h3>
 
         <section className="quick-actions">
-          <button className="btn main" onClick={() => handleNavigation("/search-doctor")}>
+          <button className="btn main" onClick={() => handleNavigation("/search")}>
             <span className="btn-icon">🔍</span>
             Find Doctors
           </button>

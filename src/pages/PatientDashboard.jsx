@@ -213,14 +213,14 @@ const PatientDashboard = () => {
           : a
       ));
       
-      navigate("/doctor-search", { 
+      navigate("/search", { 
         state: { 
           message: "Appointment rescheduled successfully!",
           rescheduledAppointment: { ...appointment, date: newDate, time: newTime }
         } 
       });
     } else {
-      navigate("/doctor-search", { 
+      navigate("/search", { 
         state: { 
           error: "Failed to reschedule appointment. Please try again."
         } 
@@ -261,7 +261,7 @@ const PatientDashboard = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          navigate("/doctor-search", { 
+          navigate("/search", { 
             state: { 
               userLocation: { latitude, longitude },
               message: "Found your location! Showing nearby doctors."
@@ -270,7 +270,7 @@ const PatientDashboard = () => {
         },
         (error) => {
           console.error("Error getting location:", error);
-          navigate("/doctor-search", { 
+          navigate("/search", { 
             state: { 
               message: "Search for doctors by name, specialty, or city."
             } 
@@ -278,7 +278,7 @@ const PatientDashboard = () => {
         }
       );
     } else {
-      navigate("/doctor-search", { 
+      navigate("/search", { 
         state: { 
           message: "Search for doctors by name, specialty, or city."
         } 
