@@ -62,8 +62,8 @@ export default function LoginPage() {
         localStorage.setItem("registrationToken", data.token);
         // Store token and optional user info
         // if (data.token) localStorage.setItem("authToken", data.token);
-        // if (data.role) localStorage.setItem("userRole", data.role);
-        // if (data.fullName) localStorage.setItem("userName", data.fullName);
+        // ?????? if (data.role) localStorage.setItem("userRole", data.role);
+        // ?????? if (data.fullName) localStorage.setItem("userName", data.fullName);
 
         setLoggedIn(true);
         navigate("/");

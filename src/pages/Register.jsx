@@ -234,13 +234,13 @@ export default function Register() {
       try {
         result = JSON.parse(text);
       } catch (err) {
-        throw new Error("Invalid JSON response from backend: " + text);
+        throw new Error("Invalid JSON response from backend: " + err);
       }
 
       if (!response.ok) {
-        throw new Error(HTTP`${response.status}: ${text}`);
+        throw new Error(`${response.status}: ${text}`);
       }
-
+      //HTTP
       console.log("Registration successful:", result);
 
       // Store token if provided
