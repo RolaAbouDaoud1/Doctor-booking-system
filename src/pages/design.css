@@ -225,7 +225,7 @@ text-decoration: underline;
     display: flex;
     flex-direction: row;
     align-items: left;
-    gap: 10px;
+    gap: 11px;
 }
 
 /* Responsive styles for desktop */
