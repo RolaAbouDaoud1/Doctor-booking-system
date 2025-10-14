@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState  } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import "./App.css";
 import DoctorSearchPage from "./pages/DoctorSearchPage";
 import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/Login";
+import Register from './pages/Register';
+
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -40,6 +43,8 @@ function App() {
           />
 <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/patient-dashboard" element={<PatientDashboard />} />
+        <Route path="/login" element={<LoginPage/>} />
+         <Route path="/register" element={<Register/>} />
         </Routes>
       </Router>
     </>
