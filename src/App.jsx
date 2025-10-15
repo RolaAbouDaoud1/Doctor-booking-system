@@ -8,8 +8,6 @@ function App() {
       <Routes>
        
         <Route path="/doctor/:doctorId/profile" element={<DoctorProfile />} />
-        
-      
         <Route path="/patient/:patientId/profile" element={<PatientProfile />} />
       </Routes>
     </Router>
