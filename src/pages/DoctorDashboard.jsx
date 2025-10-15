@@ -22,7 +22,7 @@ const DoctorDashboard = () => {
     visible: false, appointmentId: null, appointmentName: "", newDate: "", newTime: "" 
   });
   const [showAppointments, setShowAppointments] = useState(false);
-
+//hi
   // Get auth headers with token
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('authToken');
