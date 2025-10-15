@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/Login";
 import PatientDashboard from "./pages/PatientDashboard";
 import Register from './pages/Register';
+import DoctorProfile from "./pages/DoctorProfile";
+import PatientProfile from "./pages/PatientProfile";
 
 function App() {
   const [showDropList, setShowDropList] = useState(false);
@@ -30,6 +32,8 @@ function App() {
               />
             }
           />
+ <Route path="/doctor/:doctorId/profile" element={<DoctorProfile />} />
+        <Route path="/patient/:patientId/profile" element={<PatientProfile />} />
           <Route
             path="/search"
             element={

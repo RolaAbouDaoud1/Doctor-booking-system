@@ -1,0 +1,203 @@
+.page-container {
+  background-color: #f3f4f6; /* gray-100 */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.card-container {
+  width: 100%;
+  max-width: 28rem; /* same as max-w-md */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #0f766e; /* teal-700 */
+  margin-left: 0.5rem;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Profile Section */
+.profile-circle {
+  width: 5rem;   /* was 3.5rem */
+  height: 5rem;  /* was 3.5rem */
+  background-color: #0f766e; /* teal-700 */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 1.5rem; /* bigger text inside */
+  font-weight: bold;
+}
+
+
+.profile-info h2 {
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+
+.profile-info p {
+  color: #4b5563; /* gray-600 */
+
+}
+ .rating {
+  display: flex;
+  justify-content: center; /* centers horizontally */
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280; /* gray-500 */
+  margin-top: 0.25rem;
+}
+
+
+.experience-badge {
+  background-color: #ccfbf1; /* teal-100 */
+  color: #0f766e; /* teal-700 */
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.price {
+  color: #0f766e; /* teal-700 */
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+/* About & Education */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937; /* gray-800 */
+}
+
+.section-text {
+  font-size: 0.875rem;
+  color: #4b5563; /* gray-600 */
+}
+
+.education-list {
+  list-style: disc inside;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.education-list li {
+  margin-bottom: 0.25rem;
+}
+
+
+.doctor-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.doctor-card:hover {
+  transform: scale(1.02);
+}
+
+ 
+/* Button Container (centers button) */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Book Appointment Button */
+.book-button {
+  background-color: #0f766e;   /* teal */
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover effect */
+.book-button:hover {
+  background-color: #0d5d56; /* darker teal */
+  transform: scale(1.05);
+}
+
+/* Click effect */
+.book-button:active {
+  transform: scale(0.95);
+}
+.card-container {
+  width: 100%;
+  max-width: 28rem; /* default for mobile */
+}
+
+/* On medium screens (≥768px), expand */
+@media (min-width: 768px) {
+  .card-container {
+    max-width: 48rem; /* wider (≈768px) */
+  }
+
+  .profile-layout {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .profile-card {
+    flex: 1;
+  }
+
+  .profile-details {
+    flex: 2;
+  }
+}
+
+/* On large screens (≥1024px), expand even more */
+@media (min-width: 1024px) {
+  .card-container {
+    max-width: 72rem; /* wide desktop (≈1152px) */
+  }
+}
+.back-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;           /* makes it a circle */
+  background-color: #0f766e;    /* teal green */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.back-button:hover {
+  background-color: #0d5d56; /* darker teal */
+  transform: scale(1.05);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
