@@ -31,7 +31,7 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
     newTime: "",
   });
   const [showAppointments, setShowAppointments] = useState(false);
-
+//hi
   // Get auth headers with token
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem("authToken");
