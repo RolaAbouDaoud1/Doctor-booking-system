@@ -155,6 +155,8 @@ export default function DoctorSearchPage({
     }
   };
 
+  const token = Cookies.get("token");
+
   return (
     <>
       <NavBarLg
