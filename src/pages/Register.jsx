@@ -215,7 +215,7 @@ export default function Register({ showDropList, setShowDropList }) {
     const url =
       role === "Patient"
         ? `${baseUrl}/api/v1/auth/register-patient`
-        : `${baseUrl}/api/v1/auth/register-doctor;`;
+        : `${baseUrl}/api/v1/auth/register-doctor`;
 
     try {
       const response = await fetch(url, {
