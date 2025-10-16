@@ -118,6 +118,7 @@ export default function DoctorSearchPage({
 
     try {
       // prefer using URLSearchParams for safety
+      const token = Cookies.get("token");
       const params = new URLSearchParams({ text: q }).toString();
       const res = await fetch(
         `http://localhost:8080/api/users/doctors/search?${params}`,
@@ -125,8 +126,11 @@ export default function DoctorSearchPage({
           method: "GET",
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : undefined,
           },
+
+          credentials: "include",
         }
       );
       if (!res.ok) throw new Error(`Server error: ${res.status}`);

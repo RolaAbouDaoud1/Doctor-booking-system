@@ -18,7 +18,6 @@ export default function HealthConnectLanding({
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
-  localStorage.getItem("isLoggedIn");
 
   useEffect(() => {
     // Check for saved dark mode preference or system preference
@@ -137,10 +136,14 @@ export default function HealthConnectLanding({
               {/* Join Buttons */}
               {loggedInside && (
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
-                  <Link to="/login" className=" w-full sm:w-auto bg-[#E29578] hover:bg-[#E29578]/40 text-white px-8 py-2 rounded-md border-2 border-[#E29578] transition-colors">
+                  <Link
+                    to="/login"
+                    className=" w-full sm:w-auto bg-[#E29578] hover:bg-[#E29578]/40 text-white px-8 py-2 rounded-md border-2 border-[#E29578] transition-colors"
+                  >
                     Join as Patient
                   </Link>
-                  <Link to="/login"
+                  <Link
+                    to="/login"
                     className={`w-full sm:w-auto px-8 py-2 rounded-md bg-transparent border-2 transition-colors ${
                       darkMode
                         ? "border-light-teal text-light-teal hover:bg-light-teal hover:text-teal"
