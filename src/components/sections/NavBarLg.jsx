@@ -1,22 +1,61 @@
-import { Activity, ChevronRight, House, LayoutDashboard, User } from "lucide-react";
+import {
+  Activity,
+  ChevronRight,
+  House,
+  LayoutDashboard,
+  User,
+  LogIn,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 export default function NavBarLg({
   darkMode,
   setDarkMode,
   showDropList,
   setShowDropList,
 }) {
-  const navPatientLg = [
+  const navPatientLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
-    { text: " Doctors Dashboard", icon: Activity, link: "/doctor-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "Sign in", icon: User, link: "/login" },
+    { text: "My Profile", icon: User, link: "/profile" },
   ];
+
+  const navDoctorLoggedIn = [
+    { text: "Home", icon: House, link: "/" },
+    { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
+    { text: "Search For Doctors", icon: Activity, link: "/search" },
+    { text: "My Profile", icon: User, link: "/profile" },
+  ];
+
+  const navNotLoggedIn = [
+    { text: "Home", icon: House, link: "/" },
+    { text: "Search For Doctors", icon: Activity, link: "/search" },
+    { text: "Sign In", icon: LogIn, link: "/login" },
+  ];
+
+  // State for navigation array
+  const [navArray, setNavArray] = useState(navNotLoggedIn);
+
+  // Update navArray based on localStorage
+  useEffect(() => {
+    const userRole = localStorage.getItem("role");
+    const loggedStatus = localStorage.getItem("loggedIn");
+
+    if (loggedStatus) {
+      if (userRole.toLowerCase() === "doctor") {
+        setNavArray(navDoctorLoggedIn);
+      } else {
+        setNavArray(navPatientLoggedIn);
+      }
+    } else {
+      setNavArray(navNotLoggedIn);
+    }
+  }, []);   
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    //css html
     if (!darkMode) {
       document.documentElement.classList.add("dark");
     } else {
@@ -35,21 +74,24 @@ export default function NavBarLg({
               </h1>
             </Link>
           </div>
-          {/* For lG Screens*/}
+
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navPatientLg.map((item, index) => {
-              return (
-                <Link to={item.link} key={index + 100}>
-                  <h1 className="hover:text-teal-700">{item.text}</h1>
-                </Link>
-              );
-            })}
+            {navArray.map((item, index) => (
+              <Link
+                to={item.link}
+                key={index}
+                className="hover:text-teal-700 dark:hover:text-light-teal transition-colors text-gray dark:text-white"
+              >
+                {item.text}
+              </Link>
+            ))}
           </div>
 
           <div className="flex items-center space-x-4">
-            <span className="text-gray dark:text-white p-2 rounded-md text-gray hover:text-teal dark:hover:text-light-teal transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button className="text-gray dark:text-white p-2 rounded-md hover:text-teal dark:hover:text-light-teal transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
               🔔
-            </span>
+            </button>
 
             <button
               onClick={toggleDarkMode}
@@ -57,6 +99,7 @@ export default function NavBarLg({
             >
               {darkMode ? "☀️" : "🌙"}
             </button>
+
             <button
               onClick={() => setShowDropList(!showDropList)}
               className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -68,66 +111,32 @@ export default function NavBarLg({
       </div>
 
       {/* Mobile menu */}
-      {showDropList &&
-        navPatientLg.map((item, index) => {
-          return (
-            <Link to={item.link}>
+      {showDropList && (
+        <div className="lg:hidden animate-down bg-white dark:bg-gray border-t border-gray-200 dark:border-gray-600">
+          {navArray.map((item, index) => (
+            <Link to={item.link} key={index}>
               <div
-                className=" animate-down flex items-center justify-between p-4 font-medium border-b border-neutral-800/50 last:border-b-0"
+                className="flex items-center justify-between p-4 font-medium border-b border-gray-200/50 dark:border-gray-600/50 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 onClick={() => setShowDropList(false)}
-                key={index}
               >
                 <div className="flex items-center gap-3">
                   <item.icon
                     size={25}
-                    className={` text-teal transition-colors`}
+                    className="text-teal dark:text-light-teal transition-colors"
                   />
-                  <span className="text-base text-gray font-semibold transition-colors">
+                  <span className="text-base text-gray dark:text-white font-semibold transition-colors">
                     {item.text}
                   </span>
                 </div>
                 <ChevronRight
                   size={16}
-                  className="text-neutral-500 transition-colors"
+                  className="text-gray-400 dark:text-gray-500 transition-colors"
                 />
               </div>
             </Link>
-          );
-        })}
+          ))}
+        </div>
+      )}
     </nav>
   );
-  /*(
-        <div className="lg:hidden animate-down bg-white border-t border-gray-200 dark:bg-gray dark:border-gray-600">
-          <div className="px-4 py-2 space-y-2">
-            <a
-              href="#features"
-              className="block py-2 text-gray hover:text-teal dark:text-white dark:hover:text-light-teal"
-              onClick={() => setShowDropList(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#testimonials"
-              className="block py-2 text-gray hover:text-teal dark:text-white dark:hover:text-light-teal"
-              onClick={() => setShowDropList(false)}
-            >
-              Testimonials
-            </a>
-            <a
-              href="#faq"
-              className="block py-2 text-gray hover:text-teal dark:text-white dark:hover:text-light-teal"
-              onClick={() => setShowDropList(false)}
-            >
-              FAQ
-            </a>
-            <a
-              href="#contact"
-              className="block py-2 text-gray hover:text-teal dark:text-white dark:hover:text-light-teal"
-              onClick={() => setShowDropList(false)}
-            >
-              Contact
-            </a>
-          </div>
-        </div>
-      ) */
 }

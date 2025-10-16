@@ -13,9 +13,7 @@ import PatientProfile from "./pages/PatientProfile";
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState("Doctor");
-  localStorage.setItem("loggedIn", loggedIn);
   localStorage.setItem("role", role);
   return (
     <>

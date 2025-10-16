@@ -13,6 +13,7 @@ export default function Register() {
   const [token, setToken] = useState(Cookies.get("token") || "");
 
   // Basic info
+  const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -254,9 +255,11 @@ export default function Register() {
 
       Cookies.set("userEmail", email);
       Cookies.set("userRole", role);
-
+      localStorage.setItem("role", role);
+      localStorage.setItem;
       resetAll();
       navigate("/");
+      localStorage.setItem("loggedIn", loggedIn);
     } catch (error) {
       console.error("Error during registration:", error.message);
       alert("Registration failed. Please try again.");
