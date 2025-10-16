@@ -1,0 +1,448 @@
+
+
+.appointment-container {
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #eaf6f6;
+  border-radius: 15px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+
+
+.book-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.doc-details{
+  color:black;
+  display:flex ;
+  flex-direction: column;
+  margin-left: 0;
+  padding-left: 0;
+
+}
+
+
+
+.book-card { 
+  width: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.section-title{
+margin-left: 10px;
+margin-top: 5px;
+font-size: 70px;
+color:black;
+}
+
+.section input
+  {
+  margin-top: 0;
+  margin-bottom: 25px;
+  width:340px;
+}
+
+.section textarea{
+  margin-top: 0;
+  margin-bottom: 25px;
+  width:340px;
+  margin-bottom: 10px;
+}
+
+
+
+
+.title {
+  text-align: center;
+  color: #0e8b8b;
+}
+
+.doctor-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 0;
+}
+
+.avatar {
+  background: #2e7d6f;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.price {
+  color: #378375;
+  font-weight: bold;
+}
+
+.summary-row{
+  color:black;
+  display:flex;
+  justify-content: space-between;
+  width: 100%;
+  margin:8px 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-title{
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2b9e82;
+  margin-bottom: 20px;
+}
+
+.summary-container{
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: left;
+background: white;
+}
+
+.summary-row strong{
+  color: #2b9e82;
+}
+
+
+.date-grid, 
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  border-radius: 0;
+}
+
+.date-btn, .time-btn {
+  background-color: white;
+  color: black;
+  
+  padding: 8px;
+  cursor: pointer;
+}
+
+.date-btn.active, .time-btn.active {
+  background: #2e7d6f;
+  color: white;
+  
+}
+
+
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.section label{
+  color:black;
+  justify-content: left;
+  display: flex;
+  margin-left: 10px;
+  
+}
+.next-btn, .confirm-btn {
+  background: #2e7d6f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width:400px;
+  border-radius: 12px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.back-btn {
+  background-color: #84c1c1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 45px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #aee2e2;
+  border-radius: 50%;
+}
+
+.dot.active {
+  background-color: #0e8b8b;
+}
+
+.section {
+  background-color: white;
+  border-radius: 12px;
+  margin-top: 20px;
+  padding:15px;
+  
+  
+}
+
+
+.payment {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 20px;
+} 
+.payment-title,
+.payment-sub{
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+}
+
+.book-steps{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  gap:6px;
+}
+ 
+ /* responsive for tablets & phones */
+@media (max-width: 1024px) {
+  .profile-card {
+    width: 90%;
+  }
+}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ /* .appointment-container {
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #eaf6f6;
+  border-radius: 15px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.page{
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #eaf6f6;
+  border-radius: 15px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section h3 {
+  color:black;
+}
+
+label{
+  color:black;
+}
+.title{
+  color: #0e8b8b;
+}
+
+.back-btn {
+  background-color: #84c1c1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 45px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.name,
+.cardiology{
+  color: black;
+}
+.dots {
+  display: flex;
+  gap: 6px;
+  
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #aee2e2;
+  border-radius: 50%;
+}
+
+.dot.active {
+  background-color: #0e8b8b;
+}
+
+.doctor-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding:0;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #0e8b8b;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.price {
+  font-weight: bold;
+  color: #0e8b8b;
+}
+
+
+
+.section {
+  background-color: white;
+  border-radius: 12px;
+  margin-top: 20px;
+  padding: 15px;
+  
+}
+
+.section h4 {
+  margin-bottom: px;
+  color: #333;
+  
+}
+
+.dates-grid,
+.times-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.date-btn,
+.time-btn {
+  background-color: transparent;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+  color:black;
+}
+
+.date-btn.selected,
+.time-btn.selected {
+  background-color: #0e8b8b;
+  color: white;
+}
+
+.date-btn:hover,
+.time-btn:hover {
+  background-color: #0e8b8b;
+  color: white;
+}
+
+.next-btn {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #0e8b8b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.next-btn:hover {
+  opacity: 0.9;
+}
+
+.date-time{
+  color: black;
+  justify-content: right;
+  align-items: right;
+  display: flex;
+}
+
+.div{
+  justify-content: center;
+  align-items: center;
+  display: inline;
+  color:black;
+}
+
+.payment-box{
+  color:black;
+  background-color: white;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+ */

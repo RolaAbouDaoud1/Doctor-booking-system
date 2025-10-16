@@ -7,7 +7,7 @@ import RegisterPatient from "../components/register-patient";
 import NavBarLg from "../components/sections/NavBarLg";
 import "./design.css";
 
-export default function Register() {
+export default function Register({ showDropList, setShowDropList }) {
   const navigate = useNavigate();
   const baseUrl = "http://localhost:8080";
   const [token, setToken] = useState(Cookies.get("token") || "");
@@ -265,7 +265,7 @@ export default function Register() {
 
   return (
     <>
-      <NavBarLg />
+      <NavBarLg setShowDropList={setShowDropList} showDropList={showDropList} />
       <div className="login-container">
         <div className="head">
           <button className="goback">

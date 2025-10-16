@@ -6,10 +6,11 @@ import DoctorSearchPage from "./pages/DoctorSearchPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/Login";
 import PatientDashboard from "./pages/PatientDashboard";
-import Register from './pages/Register';
+import Register from "./pages/Register";
 import DoctorProfile from "./pages/DoctorProfile";
 import PatientProfile from "./pages/PatientProfile";
-
+import BookAppointment from "./pages/BookAppointment";
+import DoctorProfileF from "./pages/DoctorProfileF";
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -32,8 +33,11 @@ function App() {
               />
             }
           />
- <Route path="/doctor/:doctorId/profile" element={<DoctorProfile />} />
-        <Route path="/patient/:patientId/profile" element={<PatientProfile />} />
+          <Route path="/doctor/:doctorId/profile" element={<DoctorProfile />} />
+          <Route
+            path="/patient/:patientId/profile"
+            element={<PatientProfile />}
+          />
           <Route
             path="/search"
             element={
@@ -45,10 +49,45 @@ function App() {
               />
             }
           />
-<Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-        <Route path="/patient-dashboard" element={<PatientDashboard />} />
-        <Route path="/login" element={<LoginPage/>} />
-         <Route path="/register" element={<Register/>} />
+          <Route
+            path="/doctor-dashboard"
+            element={
+              <DoctorDashboard
+                showDropList={showDropList}
+                setShowDropList={setShowDropList}
+              />
+            }
+          />
+          <Route
+            path="/patient-dashboard"
+            element={
+              <PatientDashboard
+                showDropList={showDropList}
+                setShowDropList={setShowDropList}
+              />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <LoginPage
+                showDropList={showDropList}
+                setShowDropList={setShowDropList}
+              />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <Register
+                showDropList={showDropList}
+                setShowDropList={setShowDropList}
+              />
+            }
+          />
+
+          <Route path="/book" element={<BookAppointment />} />
+          <Route path="/doctor-profile" element={<DoctorProfileF />} />
         </Routes>
       </Router>
     </>
