@@ -43,7 +43,7 @@ export default function NavBarLg({
     const userRole = localStorage.getItem("role");
     const loggedStatus = localStorage.getItem("loggedIn");
 
-    if (loggedStatus) {
+    if (loggedStatus === "true") {
       if (userRole.toLowerCase() === "doctor") {
         setNavArray(navDoctorLoggedIn);
       } else {
@@ -52,7 +52,7 @@ export default function NavBarLg({
     } else {
       setNavArray(navNotLoggedIn);
     }
-  }, []);   
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);

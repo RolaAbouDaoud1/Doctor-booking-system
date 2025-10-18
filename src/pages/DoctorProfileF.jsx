@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./DoctorProfileF.css";
 
 export default function DoctorProfileF() {
@@ -13,11 +13,6 @@ export default function DoctorProfileF() {
 
   const handleSave = () => {
     alert("Profile saved!");
-    try {
-      console.log("test");
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   return (
@@ -39,19 +34,21 @@ export default function DoctorProfileF() {
         <h3 className="Profile-info">Profile Information </h3>
         <br />
         <label>Full Name</label>
-        <input type="text" value={""} readOnly />
+        <input className="text" type="text" value={""} readOnly />
         <br />
         <br />
         <label>Specialty</label>
-        <input type="text" value={""} readOnly />
+        <input className="text" type="text" value={""} readOnly />
         <br />
         <br />
         <label>Consultation Fee ($)</label>
-        <input type="text" value={""} readOnly />
+        <input className="text" type="text" value={""} readOnly />
         <br />
         <br />
         <label>Availability</label>
-        <textarea readOnly>{""}</textarea>
+        <textarea className="textareaaa" readOnly>
+          {""}
+        </textarea>
       </div>
 
       <button className="save-btn" onClick={handleSave}>

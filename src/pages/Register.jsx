@@ -256,10 +256,9 @@ export default function Register({ showDropList, setShowDropList }) {
       Cookies.set("userEmail", email);
       Cookies.set("userRole", role);
       localStorage.setItem("role", role);
-      localStorage.setItem;
       resetAll();
       navigate("/");
-      localStorage.setItem("loggedIn", loggedIn);
+      localStorage.setItem("loggedIn", "true");
     } catch (error) {
       console.error("Error during registration:", error.message);
       alert("Registration failed. Please try again.");

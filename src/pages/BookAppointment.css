@@ -27,7 +27,9 @@
 
 }
 
-
+.section h4{
+  color: black;
+}
 
 .book-card { 
   width: 380px;
@@ -35,7 +37,9 @@
   align-items: center;
   justify-content: space-between;
 }
-
+.name-doc{
+  margin:0;
+}
 
 .section-title{
 margin-left: 10px;
@@ -59,7 +63,9 @@ color:black;
 }
 
 
-
+.small{
+  margin:0;
+}
 
 .title {
   text-align: center;
@@ -124,6 +130,15 @@ background: white;
   color: #2b9e82;
 }
 
+.section h4 {
+  padding-left: 0px;
+  justify-content: left;
+  display: flex;
+  font-size: 13px;
+  color: #333;
+  background-color: white;
+  border-radius: 10px;
+}
 
 .date-grid, 
 .time-grid {
@@ -148,7 +163,21 @@ background: white;
   
 }
 
+.inputtt,
+ .textareaa {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  background-color: white;
+}
 
+.textareaa {
+  height: 60px;
+  resize: none;
+}
 
 .buttons {
   display: flex;
@@ -252,197 +281,3 @@ background: white;
  
  
  
- 
- 
- 
- 
- /* .appointment-container {
-  max-width: 400px;
-  margin: 20px auto;
-  background-color: #eaf6f6;
-  border-radius: 15px;
-  padding: 20px;
-  font-family: "Poppins", sans-serif;
-}
-
-.page{
-  max-width: 400px;
-  margin: 20px auto;
-  background-color: #eaf6f6;
-  border-radius: 15px;
-  padding: 20px;
-  font-family: "Poppins", sans-serif;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section h3 {
-  color:black;
-}
-
-label{
-  color:black;
-}
-.title{
-  color: #0e8b8b;
-}
-
-.back-btn {
-  background-color: #84c1c1;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 45px;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.name,
-.cardiology{
-  color: black;
-}
-.dots {
-  display: flex;
-  gap: 6px;
-  
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  background-color: #aee2e2;
-  border-radius: 50%;
-}
-
-.dot.active {
-  background-color: #0e8b8b;
-}
-
-.doctor-card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 15px;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.doctor-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding:0;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  background-color: #0e8b8b;
-  color: white;
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.price {
-  font-weight: bold;
-  color: #0e8b8b;
-}
-
-
-
-.section {
-  background-color: white;
-  border-radius: 12px;
-  margin-top: 20px;
-  padding: 15px;
-  
-}
-
-.section h4 {
-  margin-bottom: px;
-  color: #333;
-  
-}
-
-.dates-grid,
-.times-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.date-btn,
-.time-btn {
-  background-color: transparent;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 14px;
-  color:black;
-}
-
-.date-btn.selected,
-.time-btn.selected {
-  background-color: #0e8b8b;
-  color: white;
-}
-
-.date-btn:hover,
-.time-btn:hover {
-  background-color: #0e8b8b;
-  color: white;
-}
-
-.next-btn {
-  width: 100%;
-  margin-top: 20px;
-  background-color: #0e8b8b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.next-btn:hover {
-  opacity: 0.9;
-}
-
-.date-time{
-  color: black;
-  justify-content: right;
-  align-items: right;
-  display: flex;
-}
-
-.div{
-  justify-content: center;
-  align-items: center;
-  display: inline;
-  color:black;
-}
-
-.payment-box{
-  color:black;
-  background-color: white;
-  margin-top: 20px;
-  border-radius: 8px;
-}
- */

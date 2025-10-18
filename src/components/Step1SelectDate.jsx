@@ -120,3 +120,4 @@ const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
 };
 
 export default Step1SelectDate;
+  

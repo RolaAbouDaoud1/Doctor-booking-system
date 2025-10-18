@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import {useNavigate} from "react-router-dom";
 const Step3Summary = ({ appointment, prevStep }) => {
  
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const Step3Summary = ({ appointment, prevStep }) => {
         <div className="avatar">LK</div>
         <div className="doc-details">
           <h3>Dr. Layla Khoury</h3>
-          <small>Cardiology</small>
+          <small className="small">Cardiology</small>
         </div>
         <div className="price">$150</div>
       </div>

@@ -119,9 +119,10 @@ export default function DoctorSearchPage({
     try {
       // prefer using URLSearchParams for safety
       const token = Cookies.get("token");
-      const params = new URLSearchParams({ text: q }).toString();
+      const param = new URLSearchParams({ text: q }).toString();
+
       const res = await fetch(
-        `http://localhost:8080/api/users/doctors/search?${params}`,
+        `http://localhost:8080/api/users/doctors/search?${param}`,
         {
           method: "GET",
           headers: {
@@ -154,8 +155,6 @@ export default function DoctorSearchPage({
       // optionally setFilteredDoctors([]) or show error state
     }
   };
-
-  const token = Cookies.get("token");
 
   return (
     <>

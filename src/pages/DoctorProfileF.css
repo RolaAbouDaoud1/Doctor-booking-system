@@ -1,4 +1,3 @@
-
 .profile-container {
  background: #e0f5ee;
 }
@@ -42,7 +41,6 @@
  width:70px;
  height:70px;
  display: flex;
- /* margin:13px auto 13px auto; top right bottom left */
  align-items: center; 
  justify-content: center;
  margin:15px auto;
@@ -100,7 +98,28 @@
   margin: 0;
 }
 
+.text,
+.textareaaa     
+ {
+  margin-left:12px;
+  margin-top:0px;
+  margin-bottom:0;
+  border: 1px solid #e4ebeb;
+  border-radius: 8px;
+  background-color: #f8fdfd;
+  font-size: 14px;
+  color: #333;
+  resize:none;
+  width: 380px;
+  max-width: 380px;
+  padding:8px 10px;
+  box-sizing: border-box;
+}
 
+
+.textareaaa {
+ width: 380px;
+}
 
 
 .save-btn {
