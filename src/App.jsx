@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import DoctorProfile from "./pages/DoctorProfile";
 import PatientProfile from "./pages/PatientProfile";
 import BookAppointment from "./pages/BookAppointment";
+import ForgotPassword from "./components/forgot-pass";
 
 function App() {
   const [showDropList, setShowDropList] = useState(false);
@@ -83,7 +84,7 @@ function App() {
               />
             }
           />
-
+          <Route path="forgot-pass" element={<ForgotPassword/>} />
           <Route path="/book" element={<BookAppointment />} />
           <Route path="/doctor/doctorId/profile" element={<DoctorProfile/>}/>
         </Routes>

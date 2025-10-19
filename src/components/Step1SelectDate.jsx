@@ -62,7 +62,7 @@ const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
       <div className="doctor-info">
         <div className="avatar">LK</div>
         <div className="doc-details">
-          <h3>Dr. Layla Khoury</h3>
+          <h3>Dr. Ali Najjar farouj al abdalla</h3>
           <small>Cardiology</small>
         </div>
         <div className="price">$150</div>

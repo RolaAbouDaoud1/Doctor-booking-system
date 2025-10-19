@@ -15,18 +15,19 @@ export default function NavBarLg({
   showDropList,
   setShowDropList,
 }) {
+   const username=localStorage.getItem("username");
   const navPatientLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "My Profile", icon: User, link: "/patient/:patientId/profile" },
+    { text: username, icon: User, link: "/patient/:patientId/profile" },
   ];
 
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "My Profile", icon: User, link: "/doctor/:doctorId/profile" },
+    { text: username, icon: User, link: "/doctor/:doctorId/profile" },
   ];
 
   const navNotLoggedIn = [
@@ -37,7 +38,6 @@ export default function NavBarLg({
 
   // State for navigation array
   const [navArray, setNavArray] = useState(navNotLoggedIn);
-
   // Update navArray based on localStorage
   useEffect(() => {
     const userRole = localStorage.getItem("role");

@@ -8,6 +8,7 @@ export default function BookAppointment() {
   const [step , setStep] = useState(1);
   const[selectedDate , setSelectedDate] = useState(null);
   const[selectedTime , setSelectedTime] = useState(null);
+  const role= localStorage.getItem("userRole");
   const [appointment, setAppointment] = useState({
     date: "",
     time: "",
