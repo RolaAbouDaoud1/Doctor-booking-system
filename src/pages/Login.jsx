@@ -3,79 +3,64 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBarLg from "../components/sections/NavBarLg";
 import "./design.css";
+import Cookies from "js-cookie";
+import * as jwtDecode from "jwt-decode"; // ✅ Vite-compatible import
 
 export default function LoginPage({ showDropList, setShowDropList }) {
   const navigate = useNavigate();
-
   const [role, setRole] = useState("Patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let valid = true;
-
-    // Clear previous errors
-    setEmailError("");
+    setEmailError(""); 
     setPasswordError("");
 
-    if (!email) {
-      setEmailError("Email is required");
-      valid = false;
-    } else if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address");
-      valid = false;
-    }
-
-    if (!password) {
-      setPasswordError("Password is required");
-      valid = false;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    const loginData = { email, password };
+    if (!email) return setEmailError("Email is required");
+    if (!validateEmail(email)) return setEmailError("Invalid email");
+    if (!password) return setPasswordError("Password is required");
+    if (password.length < 6) return setPasswordError("Password must be at least 6 characters");
 
     try {
-      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
+      const res = await fetch("http://localhost:8080/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData),
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await res.json();
+
+      if (res.ok) {
+        const decoded = jwtDecode.default(data.token); 
+        const userId = decoded.id || data.id || null;
+        const nameFromToken = decoded.name || "User";
+
+        // Save cookies and localStorage
+        Cookies.set("token", data.token, { secure: true, sameSite: "Strict" });
+        Cookies.set("userEmail", email);
+        Cookies.set("userRole", role);
 
         localStorage.setItem("registrationToken", data.token);
-        // Store token and optional user info
-        // if (data.token) localStorage.setItem("authToken", data.token);
-        // ?????? if (data.role) localStorage.setItem("userRole", data.role);
-        // ?????? if (data.fullName) localStorage.setItem("userName", data.fullName);
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("username", nameFromToken);
 
-        setLoggedIn(true);
+        if (role === "Doctor" && userId) localStorage.setItem("doctorId", userId);
+        if (role === "Patient" && userId) localStorage.setItem("patientId", userId);
+
         navigate("/");
-        console.log("Login successful:", data);
       } else {
-        const errorData = await response.json();
-        console.error("Login failed:", errorData);
-        alert(errorData.message || "Login failed");
+        alert(data.message || "Login failed");
       }
-    } catch (error) {
-      console.error("Error during login:", error);
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
     }
   };
 
@@ -85,9 +70,7 @@ export default function LoginPage({ showDropList, setShowDropList }) {
       <div className="login-container">
         <div className="head">
           <button className="goback">
-            <Link to="/" className="back-btn">
-              &larr;
-            </Link>
+            <Link to="/" className="back-btn">&larr;</Link>
           </button>
           <h1 className="login-title">Welcome Back</h1>
         </div>
@@ -131,15 +114,12 @@ export default function LoginPage({ showDropList, setShowDropList }) {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                id="password"
                 className={`input-field ${passwordError ? "error-border" : ""}`}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <i
-                className={`fas ${
-                  showPassword ? "fa-eye-slash" : "fa-eye"
-                } eye-icon`}
+                className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"} eye-icon`}
                 onClick={() => setShowPassword(!showPassword)}
               ></i>
             </div>
@@ -147,20 +127,14 @@ export default function LoginPage({ showDropList, setShowDropList }) {
           </div>
 
           <div className="forgot">
-            <Link to="/forgot-pass" className="forgotpass">
-              Forgot Password?
-            </Link>
+            <Link to="/forgot-pass" className="forgotpass">Forgot Password?</Link>
           </div>
 
-          <div>
-            <button type="submit" className="signin-btn">
-              Sign In
-            </button>
-          </div>
+          <button type="submit" className="signin-btn">Sign In</button>
         </form>
 
         <p className="signup-text">
-          Don't have an account?<Link to="/register">Sign Up</Link>
+          Don't have an account? <Link to="/register">Sign Up</Link>
         </p>
       </div>
     </>

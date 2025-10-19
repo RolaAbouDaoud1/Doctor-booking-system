@@ -86,6 +86,7 @@ function App() {
 
           <Route path="/book" element={<BookAppointment />} />
           <Route path="/doctor-profile" element={<DoctorProfileF />} />
+  
         </Routes>
       </Router>
     </>

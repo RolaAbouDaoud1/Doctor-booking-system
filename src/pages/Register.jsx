@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import RegisterPatient from "../components/register-patient";
 import NavBarLg from "../components/sections/NavBarLg";
+import { jwtDecode } from "jwt-decode";
 import "./design.css";
 
 export default function Register({ showDropList, setShowDropList }) {
@@ -98,14 +99,7 @@ export default function Register({ showDropList, setShowDropList }) {
     const newDoctorErrors = {};
 
     // Reset previous errors
-    setNameError("");
-    setFullNameError("");
-    setPhoneError("");
-    setEmailError("");
-    setPasswordError("");
-    // setAvatarError("");
-    setPatientErrors({ dateOfBirth: "", insuranceNumber: "" });
-    setDoctorErrors({});
+   resetAll();
 
     // Validation
     if (!name.trim()) {
@@ -255,10 +249,24 @@ export default function Register({ showDropList, setShowDropList }) {
 
       Cookies.set("userEmail", email);
       Cookies.set("userRole", role);
-      localStorage.setItem("role", role);
+
+      localStorage.setItem("userRole",role);
+      localStorage.setItem("username", name);
+
+      //decode token 
+      const decoded = jwtDecode(result.token);
+      console.log("Decoded token:", decoded);
+
+      const namefromToken=decoded.name;
+      const userId = decoded.id || data.id;
+      
+      localStorage.setItem("doctorId", userId);
+      console.log("name from token: ", namefromToken);
+
       resetAll();
       navigate("/");
       localStorage.setItem("loggedIn", "true");
+
     } catch (error) {
       console.error("Error during registration:", error.message);
       alert("Registration failed. Please try again.");
