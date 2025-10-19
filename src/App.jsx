@@ -86,7 +86,7 @@ function App() {
           />
           <Route path="forgot-pass" element={<ForgotPassword/>} />
           <Route path="/book" element={<BookAppointment />} />
-          <Route path="/doctor/doctorId/profile" element={<DoctorProfile/>}/>
+          <Route path="/book/:doctorId" element={<BookAppointment />} />
         </Routes>
       </Router>
     </>

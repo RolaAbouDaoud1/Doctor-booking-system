@@ -1,4 +1,4 @@
-import { Clock, MapPin, Star } from 'lucide-react'
+import { Clock, MapPin, Star } from "lucide-react";
 
 export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
   return (
@@ -14,7 +14,9 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h3 className="font-semibold text-lg text-gray-900 mb-1">{doctor.fullName}</h3>
+              <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                {doctor.fullName}
+              </h3>
               <p className="text-sm text-gray-600 mb-1">
                 {doctor.specialties[0].name} • {doctor.yearsOfExperience} years
               </p>
@@ -22,8 +24,12 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
             <div className="text-right">
               <div className="flex items-center gap-1 mb-1">
                 <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                <span className="font-semibold text-sm">{doctor.avgRating}</span>
-                <span className="text-xs text-gray-500">({doctor.reviewsCount})</span>
+                <span className="font-semibold text-sm">
+                  {doctor.avgRating}
+                </span>
+                <span className="text-xs text-gray-500">
+                  ({doctor.reviewsCount})
+                </span>
               </div>
               <p className="font-semibold text-lg" style={{ color: "#006d77" }}>
                 {doctor.price}
@@ -35,7 +41,7 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
           <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
-              <span>{doctor.distance}</span>
+              <span>{doctor.distance}Lebanon</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
@@ -46,7 +52,10 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
           {/* Languages */}
           <div className="flex gap-2 mb-4">
             {doctor.languages.map((language) => (
-              <span key={language} className="px-2 py-1 text-xs rounded-md bg-gray-100 text-gray-700">
+              <span
+                key={language}
+                className="px-2 py-1 text-xs rounded-md bg-gray-100 text-gray-700"
+              >
                 {language}
               </span>
             ))}
@@ -60,9 +69,13 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
             >
               View Profile
             </button>
-            <button 
-              onClick={() => onBookNow && onBookNow(doctor)}
-              className="flex-1 py-2 px-4 rounded-lg text-white hover:opacity-90 transition-colors" 
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeof onBookNow === "function") onBookNow(doctor);
+              }}
+              className="flex-1 py-2 px-4 rounded-lg text-white hover:opacity-90 transition-colors"
               style={{ backgroundColor: "#006d77" }}
             >
               Book Now
@@ -71,5 +84,5 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

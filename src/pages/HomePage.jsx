@@ -18,7 +18,7 @@ export default function HealthConnectLanding({
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
-
+ const loggedStatus = localStorage.getItem("loggedIn");
   useEffect(() => {
     // Check for saved dark mode preference or system preference
     const savedDarkMode = localStorage.getItem("darkMode");
@@ -134,7 +134,7 @@ export default function HealthConnectLanding({
               </div>
 
               {/* Join Buttons */}
-              {loggedInside && (
+              {!loggedStatus && (
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
                   <Link
                     to="/login"
@@ -241,7 +241,7 @@ export default function HealthConnectLanding({
         </section>
 
         {/* CTA Section */}
-        {loggedInside && (
+        {!loggedStatus && (
           <section className="py-16 lg:py-24 bg-teal text-white">
             <CTASection />
           </section>
