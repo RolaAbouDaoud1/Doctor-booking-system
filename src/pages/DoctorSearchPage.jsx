@@ -1,56 +1,10 @@
 import { Filter, Search, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DoctorCard from "../components/DoctorCard";
 import ScrollToTop from "../components/other/ScrollToTop";
 import NavBarLg from "../components/sections/NavBarLg";
 import Cookies from "js-cookie";
-
-const mockDoctors = [
-  {
-    id: 1,
-    fullName: "Dr. Layla Khoury",
-    avgRating: 4.9,
-    reviewsCount: 156,
-    specialties: [{ name: "Cardiology", isMajor: true, yearsOfExperience: 12 }],
-    yearsOfExperience: 15,
-    clinicLocation: { type: "Point", coordinates: [35.4822, 33.2736] },
-    languages: ["Arabic", "English", "French"],
-    distance: "2.5 km away",
-    nextAvailable: "Today 3:00 PM",
-    price: "$150",
-    initials: "LK",
-  },
-  {
-    id: 2,
-    fullName: "Dr. Omar Khalil",
-    avgRating: 4.7,
-    reviewsCount: 89,
-    specialties: [
-      { name: "General Medicine", isMajor: true, yearsOfExperience: 8 },
-    ],
-    yearsOfExperience: 8,
-    clinicLocation: { type: "Point", coordinates: [35.4922, 33.2836] },
-    languages: ["Arabic", "English"],
-    distance: "1.8 km away",
-    nextAvailable: "Tomorrow 10:00 AM",
-    price: "$120",
-    initials: "OK",
-  },
-  {
-    id: 3,
-    fullName: "Dr. Nour Abdallah",
-    avgRating: 4.8,
-    reviewsCount: 203,
-    specialties: [{ name: "Pediatrics", isMajor: true, yearsOfExperience: 10 }],
-    yearsOfExperience: 12,
-    clinicLocation: { type: "Point", coordinates: [35.5022, 33.2936] },
-    languages: ["Arabic", "English"],
-    distance: "3.2 km away",
-    nextAvailable: "Today 5:00 PM",
-    price: "$140",
-    initials: "NA",
-  },
-];
 
 const specialties = [
   "All",
@@ -58,6 +12,7 @@ const specialties = [
   "General Medicine",
   "Pediatrics",
   "Dermatology",
+  "Neuro-Op",
 ];
 
 export default function DoctorSearchPage({
@@ -68,8 +23,9 @@ export default function DoctorSearchPage({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
-  const [filteredDoctors, setFilteredDoctors] = useState(mockDoctors);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
   useEffect(() => {}, []);
+  const navigate = useNavigate();
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -82,7 +38,7 @@ export default function DoctorSearchPage({
   };
 
   const filterDoctors = (query, specialty) => {
-    let filtered = mockDoctors;
+    let filtered = [];
 
     if (query) {
       filtered = filtered.filter(
@@ -108,7 +64,13 @@ export default function DoctorSearchPage({
   };
 
   const handleBookNow = (doctor) => {
-    console.log("Book appointment with:", doctor.fullName);
+    console.log("handleBookNow called, doctor:", doctor);
+    if (!doctor || !doctor.id) {
+      console.warn("No doctor or id present — cannot navigate");
+      return;
+    }
+    // use a specific route — change to your booking route
+    navigate(`/book/${doctor.id}`);
   };
   const handleKeyDown = async (event) => {
     if (event.key !== "Enter") return;
@@ -230,7 +192,12 @@ export default function DoctorSearchPage({
             Sort by Rating
           </button>
         </div>
-
+        {filteredDoctors.length === 0 ? (
+          <div className=" w-full py-50 text-center text-3xl">
+            {" "}
+            Oops, No Doctors Found
+          </div>
+        ) : null}
         <div className="px-4 space-y-4">
           {filteredDoctors.map((doctor) => (
             <DoctorCard

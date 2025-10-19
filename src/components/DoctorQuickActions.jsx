@@ -354,7 +354,7 @@ const DoctorQuickActions = ({ onNavigate }) => {
       <div className="quick-actions-card">
         <h3 className="section-title">⚡ Quick Actions</h3>
         <section className="quick-actions">
-        <button className="btn mint" onClick={() => onNavigate("/doctor-search")}>
+        <button className="btn mint" onClick={() => onNavigate("/search")}>
             <span className="btn-icon">🔍</span>
             Find Colleagues
           </button>

@@ -10,7 +10,6 @@ import Register from "./pages/Register";
 import DoctorProfile from "./pages/DoctorProfile";
 import PatientProfile from "./pages/PatientProfile";
 import BookAppointment from "./pages/BookAppointment";
-import DoctorProfileF from "./pages/DoctorProfileF";
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -85,8 +84,7 @@ function App() {
           />
 
           <Route path="/book" element={<BookAppointment />} />
-          <Route path="/doctor-profile" element={<DoctorProfileF />} />
-  
+          <Route path="/book/:doctorId" element={<BookAppointment />} />
         </Routes>
       </Router>
     </>

@@ -25,7 +25,7 @@ export default function NavBarLg({
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
-    { text: "Search For Doctors", icon: Activity, link: "/search" },
+    { text: "Search For Colleages", icon: Activity, link: "/search" },
     { text: "My Profile", icon: User, link: "/doctor-profile" },
   ];
 

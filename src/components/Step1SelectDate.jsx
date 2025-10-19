@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
   const [dates, setDates] = useState([]);
@@ -62,7 +62,7 @@ const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
       <div className="doctor-info">
         <div className="avatar">LK</div>
         <div className="doc-details">
-          <h3>Dr. Layla Khoury</h3>
+          <h3>MEOW</h3>
           <small>Cardiology</small>
         </div>
         <div className="price">$150</div>
