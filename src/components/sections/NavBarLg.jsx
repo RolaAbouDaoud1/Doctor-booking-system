@@ -19,14 +19,14 @@ export default function NavBarLg({
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "My Profile", icon: User, link: "/patient-profile" },
+    { text: "My Profile", icon: User, link: "/patient/:patientId/profile" },
   ];
 
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "My Profile", icon: User, link: "/doctor-profile" },
+    { text: "My Profile", icon: User, link: "/doctor/:doctorId/profile" },
   ];
 
   const navNotLoggedIn = [
