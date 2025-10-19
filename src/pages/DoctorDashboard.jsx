@@ -73,6 +73,7 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
         });
         if (!response.ok) throw new Error("Failed to fetch doctor profile");
         const data = await response.json();
+        
         return data;
       } catch (error) {
         console.error("Error fetching doctor profile:", error);

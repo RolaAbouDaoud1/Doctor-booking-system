@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
   const [dates, setDates] = useState([]);
   const [times, setTimes] = useState([]);
+  const Docname=localStorage.getItem("Docname");
 
   // Generate next 7 days dynamically
   useEffect(() => {
@@ -62,7 +63,7 @@ const Step1SelectDate = ({ appointment, setAppointment, nextStep }) => {
       <div className="doctor-info">
         <div className="avatar">LK</div>
         <div className="doc-details">
-          <h3>Dr. Ali Najjar farouj al abdalla</h3>
+          <h3>{Docname}</h3>
           <small>Cardiology</small>
         </div>
         <div className="price">$150</div>
