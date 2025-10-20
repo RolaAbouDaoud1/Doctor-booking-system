@@ -16,7 +16,11 @@ function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [role, setRole] = useState("Doctor");
+  const patientId=localStorage.getItem("patientId");
+  const doctorId=localStorage.getItem("doctorId");
+
   localStorage.setItem("role", role);
+  
   return (
     <>
       <Router>
@@ -85,7 +89,7 @@ function App() {
             }
           />
           <Route path="forgot-pass" element={<ForgotPassword/>} />
-          <Route path="/book" element={<BookAppointment />} />
+          {/* <Route path="/book" element={<BookAppointment />} /> */}
           <Route path="/book/:doctorId" element={<BookAppointment />} />
         </Routes>
       </Router>

@@ -258,10 +258,15 @@ export default function Register({ showDropList, setShowDropList }) {
       console.log("Decoded token:", decoded);
 
       const namefromToken=decoded.name;
-      const userId = decoded.id || data.id;
-      
-      localStorage.setItem("doctorId", userId);
+      if (role === "Doctor") {
+        localStorage.setItem("specialties", JSON.stringify(doctorData.specialties));
+        localStorage.setItem("doctorId", result.id);
+      } else if (role === "Patient") {
+        localStorage.setItem("patientId", result.id);
+      }
       console.log("name from token: ", namefromToken);
+      // console.log("patientId: ", patientId);
+      // console.log("doctorId: ", doctorId);
 
       resetAll();
       navigate("/");

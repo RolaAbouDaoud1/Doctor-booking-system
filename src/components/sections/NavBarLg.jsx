@@ -16,6 +16,9 @@ export default function NavBarLg({
   setShowDropList,
 }) {
    const username=localStorage.getItem("username");
+  const patientId=localStorage.getItem("patientId");
+  const doctorId=localStorage.getItem("doctorId");
+  
   const navPatientLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
@@ -26,7 +29,7 @@ export default function NavBarLg({
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
-    { text: "Search For Doctors", icon: Activity, link: "/search" },
+    { text: "View Appointments", icon: Activity, link: "/doctor-dashboard" },
     { text: username, icon: User, link: "/doctor/:doctorId/profile" },
   ];
 

@@ -8,11 +8,12 @@ import DoctorEducation from "../components/DoctorEducation";
 import BookAppointmentButton from "../components/BookAppointmentButton";
 
 export default function DoctorProfile() {
-  const { doctorId } = useParams();
+  // const { doctorId } = useParams();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const patientId=localStorage.getItem("patientId");
+  const doctorId=localStorage.getItem("doctorId");
   const baseURL = "http://localhost:8080/api/doctors"; // backend base URL
 
   useEffect(() => {

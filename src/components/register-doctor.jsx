@@ -49,29 +49,37 @@ export default function RegisterDoctor({ data = {}, setData, errors = {} }) {
   };
 
   // 🔹 Specialties
-  const handleAddSpecialty = () => {
-    if (specialtyName.trim() && specialtyYears) {
-      const updated = [
-        ...(data.specialties || []),
-        {
+    const handleAddSpecialty = () => {
+      if (specialtyName.trim() && specialtyYears) {
+        const newSpecialty = {
           name: specialtyName.trim(),
           yearsExperience: parseInt(specialtyYears),
           major: Boolean(major),
-        },
-      ];
-      setData((prev) => ({ ...prev, specialties: updated }));
-      setSpecialtyName("");
-      setSpecialtyYears("");
-      setMajor(false);
-    }
-  };
+          price: servicePrice ? parseFloat(servicePrice) : 0,
+        };
 
-  const handleRemoveSpecialty = (index) => {
-    const updated = (data.specialties || []).filter((_, i) => i !== index);
-    setData((prev) => ({ ...prev, specialties: updated }));
-  };
+        // Update state only
+        setData((prev) => ({
+          ...prev,
+          specialties: [...(prev.specialties || []), newSpecialty],
+        }));
 
-  // 🔹 Clinic Location
+        // Reset fields
+        setSpecialtyName("");
+        setSpecialtyYears("");
+        setMajor(false);
+        setServicePrice("");
+      }
+    };
+
+
+const handleRemoveSpecialty = (index) => {
+  const updated = (data.specialties || []).filter((_, i) => i !== index);
+  setData((prev) => ({ ...prev, specialties: updated }));
+};
+
+
+  // Clinic Location
   const handleLocationChange = (field, value) => {
     const updated = { ...clinicLocation };
 
@@ -254,6 +262,13 @@ export default function RegisterDoctor({ data = {}, setData, errors = {} }) {
             placeholder="Years experience"
             onChange={(e) => setSpecialtyYears(e.target.value)}
           />
+          <input
+            type="number"
+            value={servicePrice}
+            className="input-field"
+            placeholder="Price"
+            onChange={(e) => setServicePrice(e.target.value)}
+          />
           <label>
             <input
               type="checkbox"
@@ -270,8 +285,8 @@ export default function RegisterDoctor({ data = {}, setData, errors = {} }) {
         <ul className="list">
           {(data.specialties || []).map((s, i) => (
             <li key={i}>
-              {s.name} — {s.yearsExperience} years —{" "}
-              {s.major ? "Major" : "Minor"}{" "}
+              {s.name} — {s.yearsExperience} years — {s.major ? "Major" : "Minor"} — $
+              {s.price}{" "}
               <button
                 type="button"
                 className="delete"
