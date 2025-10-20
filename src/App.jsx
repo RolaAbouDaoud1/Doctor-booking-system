@@ -15,6 +15,7 @@ import ForgotPassword from "./components/forgot-pass";
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [role, setRole] = useState("Doctor");
   localStorage.setItem("role", role);
   return (

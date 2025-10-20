@@ -14,6 +14,7 @@ export default function Register({ showDropList, setShowDropList }) {
   const [token, setToken] = useState(Cookies.get("token") || "");
 
   // Basic info
+  // eslint-disable-next-line no-unused-vars
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
@@ -258,7 +259,7 @@ export default function Register({ showDropList, setShowDropList }) {
       console.log("Decoded token:", decoded);
 
       const namefromToken=decoded.name;
-      const userId = decoded.id || data.id;
+      const userId = decoded.id;
       
       localStorage.setItem("doctorId", userId);
       console.log("name from token: ", namefromToken);
