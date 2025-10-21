@@ -11,7 +11,7 @@ import {
   Moon,
   Menu,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowDropList }) {
   const [scrolled, setScrolled] = useState(false);
@@ -24,38 +24,32 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
   const [patientId, setPatientId] = useState("123");
   const [doctorId, setDoctorId] = useState("456");
 
-  const navPatientLoggedIn = [
-    { text: "Home", icon: Home, link: "/" },
-    { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
-    { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: username, icon: User, link: `/patient/${patientId}/profile` },
-  ];
-
-  const navDoctorLoggedIn = [
-    { text: "Home", icon: Home, link: "/" },
-    { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
-    { text: "View Appointments", icon: Activity, link: "/doctor-dashboard" },
-    { text: username, icon: User, link: `/doctor/${doctorId}/profile` },
-  ];
-
-  const navNotLoggedIn = [
-    { text: "Home", icon: Home, link: "/" },
-    { text: "Search For Doctors", icon: Activity, link: "/search" },
-    { text: "Sign In", icon: LogIn, link: "/login" },
-  ];
-
-  const [navArray, setNavArray] = useState(navNotLoggedIn);
-
-  useEffect(() => {
+  const navArray = useMemo(() => {
     if (loggedStatus) {
       if (role?.toLowerCase() === "doctor") {
-        setNavArray([...navDoctorLoggedIn, { text: "Logout", icon: LogOut }]);
-      } else {
-        setNavArray([...navPatientLoggedIn, { text: "Logout", icon: LogOut }]);
+        return [
+          { text: "Home", icon: Home, link: "/" },
+          { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
+          { text: "View Appointments", icon: Activity, link: "/doctor-dashboard" },
+          { text: username ?? "Doctor", icon: User, link: `/doctor/${doctorId}/profile` },
+          { text: "Logout", icon: LogOut },
+        ];
       }
-    } else {
-      setNavArray(navNotLoggedIn);
+
+      return [
+        { text: "Home", icon: Home, link: "/" },
+        { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
+        { text: "Search For Doctors", icon: Activity, link: "/search" },
+        { text: username ?? "Patient", icon: User, link: `/patient/${patientId}/profile` },
+        { text: "Logout", icon: LogOut },
+      ];
     }
+
+    return [
+      { text: "Home", icon: Home, link: "/" },
+      { text: "Search For Doctors", icon: Activity, link: "/search" },
+      { text: "Sign In", icon: LogIn, link: "/login" },
+    ];
   }, [role, loggedStatus, username, patientId, doctorId]);
 
   useEffect(() => {
@@ -81,7 +75,6 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
     setUsername(null);
     setPatientId(null);
     setDoctorId(null);
-    setNavArray(navNotLoggedIn);
   };
 
   return (
