@@ -179,7 +179,7 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
-    { text: "View Appointments", icon: Activity, link: "/doctor-dashboard" },
+    { text: "View Appointments", icon: Activity, link: "/patient-dashboard" },
     { text: username, icon: User, link: `/doctor/${doctorId}/profile` },
   ];
 

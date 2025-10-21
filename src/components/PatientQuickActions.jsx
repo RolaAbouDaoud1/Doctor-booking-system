@@ -9,6 +9,7 @@ const PatientQuickActions = () => {
   const [completedToday, setCompletedToday] = useState([]);
   const [showMotivation, setShowMotivation] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
+  const patientId=localStorage.getItem("patientId");
 
   const wellnessActions = useMemo(() => [
     {
@@ -378,7 +379,7 @@ const PatientQuickActions = () => {
             </div>
           </button>
 
-          <button className="btn mint" onClick={() => handleNavigation("/patient-profile")}>
+          <button className="btn mint" onClick={() => handleNavigation(`/patient/${patientId}/profile`)}>
             <span className="btn-icon">👤</span>
             My Profile
           </button>

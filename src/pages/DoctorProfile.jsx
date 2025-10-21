@@ -8,7 +8,7 @@ import DoctorEducation from "../components/DoctorEducation";
 import BookAppointmentButton from "../components/BookAppointmentButton";
 
 export default function DoctorProfile() {
-  const { doctorId: paramsDoctorId } = useParams();
+  const doctorId = localStorage.getItem("doctorId");
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,36 +16,47 @@ export default function DoctorProfile() {
   const storedDoctorId = localStorage.getItem("doctorId");
   
   // Use doctorId from URL params first, fallback to localStorage
-  const doctorId = paramsDoctorId || storedDoctorId;
+
   const baseURL = "http://localhost:8080/api/doctors"; // backend base URL
 
-  useEffect(() => {
-    const fetchDoctor = async () => {
-      try {
-        const response = await fetch(`${baseURL}/${doctorId}/profile`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setDoctor(data);
-        
-        // Use patientId in the component logic
-        console.log("Patient ID:", patientId); // Example usage
-      } catch (err) {
-        console.error("Error fetching doctor data:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+  const fetchDoctor = async () => {
+    try {
+      const token = localStorage.getItem("token"); //  get the token
 
-    if (doctorId) {
-      fetchDoctor();
-    } else {
+      console.log("Using token:", token);
+      console.log("Doctor ID:", doctorId);
+
+      const response = await fetch(`${baseURL}/${doctorId}/profile`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, //  send token to backend
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+
+      const data = await response.json();
+      setDoctor(data);
+      console.log("Patient ID:", patientId);
+    } catch (err) {
+      console.error("Error fetching doctor data:", err);
+      setError(err.message);
+    } finally {
       setLoading(false);
-      setError("No doctor ID found");
     }
-  }, [doctorId, patientId]); // Add patientId to dependencies to show it's used
+  };
+
+  if (doctorId) {
+    fetchDoctor();
+  } else {
+    setLoading(false);
+    setError("No doctor ID found");
+  }
+}, [doctorId, patientId]);
+
 
   if (loading) return <p>Loading...</p>;
 

@@ -1,37 +1,18 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import NavBarLg from "../components/sections/NavBarLg";
 import { jwtDecode } from "jwt-decode";
 import "./design.css";
 
 export default function Register({ showDropList, setShowDropList }) {
-  
+    const navigate = useNavigate();
   const baseUrl = "http://localhost:8080";
-
-  // Clear previous user data on component mount
-  // useEffect(() => {
-  //   // Clear cookies
-  //   Cookies.remove("token");
-  //   Cookies.remove("userEmail");
-  //   Cookies.remove("role");
-
-  //   // Clear localStorage
-  //   localStorage.removeItem("role");
-  //   localStorage.removeItem("username");
-  //   localStorage.removeItem("patientId");
-  //   localStorage.removeItem("doctorId");
-  //   localStorage.removeItem("specialties");
-  //   localStorage.removeItem("loggedIn");
-
-  //   console.log("Previous user data cleared");
-  // }, []);
 
   const [token, setToken] = useState("");
 
-  // Basic info
   // eslint-disable-next-line no-unused-vars
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState("");
@@ -42,6 +23,8 @@ export default function Register({ showDropList, setShowDropList }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [Gender, setGender] = useState("Male");
+
+
 
   // Error states
   const [nameError, setNameError] = useState("");
@@ -79,6 +62,14 @@ export default function Register({ showDropList, setShowDropList }) {
     services: [],
     specialties: [],
   });
+ const [patientTotal, setPatientTotal] = useState({
+    username: name,
+    useremail: email,
+    userphone:  phone,
+    userallergies: patientData.allergies,
+  });
+
+
 
   const [doctorErrors, setDoctorErrors] = useState({});
 
@@ -398,8 +389,10 @@ export default function Register({ showDropList, setShowDropList }) {
       Cookies.set("userEmail", email);
       Cookies.set("role", role);
 
-      localStorage.setItem("userRole", role);
+      localStorage.setItem("role", role);
       localStorage.setItem("username", name);
+      localStorage.setItem("patientTotal", JSON.stringify(patientTotal));
+
 
       // Decode token
       const decoded = jwtDecode(result.token);
@@ -407,12 +400,17 @@ export default function Register({ showDropList, setShowDropList }) {
 
       const namefromToken = decoded.name;
       const userId = decoded.id;
-
-      localStorage.setItem("doctorId", userId);
+      if(role==="patient"){
+        localStorage.setItem("patientId", userId);
+      }
+      else{
+        localStorage.setItem("doctorId",userId);
+      }
       console.log("name from token: ", namefromToken);
 
       resetAll();
       localStorage.setItem("loggedIn", "true");
+      navigate("/");
       // Use loggedIn variable to make eslint-disable necessary
       if (loggedIn) {
         console.log("Already logged in");
