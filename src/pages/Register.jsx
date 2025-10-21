@@ -1,6 +1,6 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import RegisterPatient from "../components/register-patient";
@@ -11,7 +11,26 @@ import "./design.css";
 export default function Register({ showDropList, setShowDropList }) {
   const navigate = useNavigate();
   const baseUrl = "http://localhost:8080";
-  const [token, setToken] = useState(Cookies.get("token") || "");
+
+  // Clear previous user data on component mount
+  // useEffect(() => {
+  //   // Clear cookies
+  //   Cookies.remove("token");
+  //   Cookies.remove("userEmail");
+  //   Cookies.remove("role");
+
+  //   // Clear localStorage
+  //   localStorage.removeItem("role");
+  //   localStorage.removeItem("username");
+  //   localStorage.removeItem("patientId");
+  //   localStorage.removeItem("doctorId");
+  //   localStorage.removeItem("specialties");
+  //   localStorage.removeItem("loggedIn");
+
+  //   console.log("Previous user data cleared");
+  // }, []);
+
+  const [token, setToken] = useState("");
 
   // Basic info
   const [loggedIn, setLoggedIn] = useState(false);
@@ -22,7 +41,6 @@ export default function Register({ showDropList, setShowDropList }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  // const [avatar, setAvatar] = useState("");
   const [Gender, setGender] = useState("Male");
 
   // Error states
@@ -31,7 +49,6 @@ export default function Register({ showDropList, setShowDropList }) {
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  // const [avatarError, setAvatarError] = useState("");
 
   // Patient / Doctor data
   const [patientData, setPatientData] = useState({});
@@ -57,15 +74,13 @@ export default function Register({ showDropList, setShowDropList }) {
 
   const [doctorErrors, setDoctorErrors] = useState({});
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
+  // Helper to reset form state
   const resetAll = () => {
     setName("");
     setFullName("");
     setPhone("");
     setEmail("");
     setPassword("");
-    // setAvatar("");
     setGender("Male");
     setPatientData({});
     setDoctorData({
@@ -87,10 +102,12 @@ export default function Register({ showDropList, setShowDropList }) {
     setPhoneError("");
     setEmailError("");
     setPasswordError("");
-    // setAvatarError("");
     setPatientErrors({ dateOfBirth: "", insuranceNumber: "" });
     setDoctorErrors({});
   };
+
+  // Email validation
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,9 +116,9 @@ export default function Register({ showDropList, setShowDropList }) {
     const newDoctorErrors = {};
 
     // Reset previous errors
-   resetAll();
+    resetAll();
 
-    // Validation
+    // Basic validation
     if (!name.trim()) {
       setNameError("Name is required");
       valid = false;
@@ -139,6 +156,7 @@ export default function Register({ showDropList, setShowDropList }) {
       valid = false;
     }
 
+    // Patient-specific validation
     if (role === "Patient") {
       if (!patientData.dateOfBirth) {
         newPatientErrors.dateOfBirth = "Date of birth is required";
@@ -157,6 +175,7 @@ export default function Register({ showDropList, setShowDropList }) {
       setPatientErrors(newPatientErrors);
     }
 
+    // Doctor-specific validation
     if (role === "Doctor") {
       if (!doctorData.languages.length) {
         newDoctorErrors.languages = "Please add at least one language";
@@ -235,7 +254,7 @@ export default function Register({ showDropList, setShowDropList }) {
       if (!response.ok) {
         throw new Error(`${response.status}: ${text}`);
       }
-      //HTTP
+
       console.log("Registration successful:", result);
 
       // Store token if provided
@@ -248,35 +267,34 @@ export default function Register({ showDropList, setShowDropList }) {
       }
 
       Cookies.set("userEmail", email);
-      Cookies.set("userRole", role);
+      Cookies.set("role", role);
 
-      localStorage.setItem("userRole",role);
+      localStorage.setItem("role", role);
       localStorage.setItem("username", name);
 
-      //decode token 
+      // Decode token
       const decoded = jwtDecode(result.token);
       console.log("Decoded token:", decoded);
 
-      const namefromToken=decoded.name;
       if (role === "Doctor") {
-        localStorage.setItem("specialties", JSON.stringify(doctorData.specialties));
+        localStorage.setItem(
+          "specialties",
+          JSON.stringify(doctorData.specialties)
+        );
         localStorage.setItem("doctorId", result.id);
       } else if (role === "Patient") {
         localStorage.setItem("patientId", result.id);
       }
-      console.log("name from token: ", namefromToken);
-      // console.log("patientId: ", patientId);
-      // console.log("doctorId: ", doctorId);
 
       resetAll();
-      navigate("/");
       localStorage.setItem("loggedIn", "true");
-
+      navigate("/");
     } catch (error) {
       console.error("Error during registration:", error.message);
       alert("Registration failed. Please try again.");
     }
   };
+
 
   return (
     <>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import "./DoctorProfile.css";
 import DoctorHeader from "../components/DoctorHeader";
 import DoctorCard from "../components/DoctorCard";
@@ -12,7 +11,6 @@ export default function DoctorProfile() {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const patientId=localStorage.getItem("patientId");
   const doctorId=localStorage.getItem("doctorId");
   const baseURL = "http://localhost:8080/api/doctors"; // backend base URL
 
