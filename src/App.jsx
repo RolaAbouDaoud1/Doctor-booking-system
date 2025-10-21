@@ -17,7 +17,14 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [role, setRole] = useState("Doctor");
+  const patientId = localStorage.getItem("patientId");
+  const doctorId = localStorage.getItem("doctorId");
+
   localStorage.setItem("role", role);
+  
+  // Use the variables to avoid ESLint warnings
+  console.log("Patient ID:", patientId, "Doctor ID:", doctorId);
+
   return (
     <>
       <Router>
@@ -33,10 +40,13 @@ function App() {
               />
             }
           />
-          <Route path="/doctor/:doctorId/profile" element={<DoctorProfile />} />
+          <Route 
+            path="/doctor/:doctorId/profile" 
+            element={<DoctorProfile doctorId={doctorId} />} 
+          />
           <Route
             path="/patient/:patientId/profile"
-            element={<PatientProfile />}
+            element={<PatientProfile patientId={patientId} />}
           />
           <Route
             path="/search"
@@ -46,6 +56,7 @@ function App() {
                 setDarkMode={setDarkMode}
                 setShowDropList={setShowDropList}
                 showDropList={showDropList}
+                patientId={patientId}
               />
             }
           />
@@ -55,6 +66,7 @@ function App() {
               <DoctorDashboard
                 showDropList={showDropList}
                 setShowDropList={setShowDropList}
+                doctorId={doctorId}
               />
             }
           />
@@ -64,6 +76,7 @@ function App() {
               <PatientDashboard
                 showDropList={showDropList}
                 setShowDropList={setShowDropList}
+                patientId={patientId}
               />
             }
           />
@@ -73,6 +86,8 @@ function App() {
               <LoginPage
                 showDropList={showDropList}
                 setShowDropList={setShowDropList}
+                patientId={patientId}
+                doctorId={doctorId}
               />
             }
           />
@@ -82,12 +97,17 @@ function App() {
               <Register
                 showDropList={showDropList}
                 setShowDropList={setShowDropList}
+                patientId={patientId}
+                doctorId={doctorId}
               />
             }
           />
-          <Route path="forgot-pass" element={<ForgotPassword/>} />
-          <Route path="/book" element={<BookAppointment />} />
-          <Route path="/book/:doctorId" element={<BookAppointment />} />
+          <Route path="forgot-pass" element={<ForgotPassword />} />
+          {/* <Route path="/book" element={<BookAppointment />} /> */}
+          <Route 
+            path="/book/:doctorId" 
+            element={<BookAppointment patientId={patientId} />} 
+          />
         </Routes>
       </Router>
     </>

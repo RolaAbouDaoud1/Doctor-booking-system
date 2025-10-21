@@ -31,6 +31,11 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
     newTime: "",
   });
   const [showAppointments, setShowAppointments] = useState(false);
+  const username=localStorage.getItem("username");
+  const specialties = JSON.parse(localStorage.getItem("specialties")) || [];
+  const patientId=localStorage.getItem("patientId");
+  const doctorId=localStorage.getItem("doctorId");
+
 
   // Get auth headers with token
   const getAuthHeaders = useCallback(() => {
@@ -441,15 +446,26 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
         <div className="dashboard-header">
           <div>
             <p className="greeting">
-              {greeting},{" "}
-              <span className="doctor-highlight">Dr. Layla Khoury!</span>
+              {greeting}, <span className="doctor-highlight">{username}</span>
             </p>
             <p className="motivational">{motivationalByDay}</p>
-            <p className="subtle">
-              Cardiology -- Date: {now.toLocaleDateString()}
-            </p>
+
+            <div className="subtle">
+              {specialties.length > 0 ? (
+                specialties.map((s, i) => (
+                  <span key={i} className="specialty-item">
+                    Specialty: {s.name || "N/A"} — Price: ${s.price ?? "N/A"} — Years: {s.yearsExperience ?? "N/A"} — Major: {s.major ? "Yes" : "No"}
+                    <br /> </span>
+                ))
+              ) : (
+                <span> No specialties saved </span>
+              )}
+              <span className="dashboard-date"><br /> <br /> Date: {now.toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
+
+
 
         <div className="section-container">
           <DoctorQuickActions

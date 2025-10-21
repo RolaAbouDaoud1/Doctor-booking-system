@@ -9,6 +9,8 @@ const DoctorQuickActions = ({ onNavigate }) => {
   const [completedToday, setCompletedToday] = useState([]);
   const [showMotivation, setShowMotivation] = useState(null);
   const [currentPhase, setCurrentPhase] = useState(0);
+  const patientId=localStorage.getItem("patientId");
+  const doctorId=localStorage.getItem("doctorId");
 
   const wellnessActions = useMemo(() => [
     {
@@ -371,7 +373,7 @@ const DoctorQuickActions = ({ onNavigate }) => {
               )}
             </div>
           </button>
-            <button className="btn main" onClick={() => onNavigate("/doctor-profile")}>
+            <button className="btn main" onClick={() => onNavigate("/doctor/:doctorId/profile")}>
             <span className="btn-icon">👨‍⚕️</span>
             Update Profile
           </button>

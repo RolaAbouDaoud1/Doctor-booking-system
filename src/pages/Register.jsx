@@ -3,7 +3,6 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
-import RegisterPatient from "../components/register-patient";
 import NavBarLg from "../components/sections/NavBarLg";
 import { jwtDecode } from "jwt-decode";
 import "./design.css";
@@ -23,7 +22,6 @@ export default function Register({ showDropList, setShowDropList }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  // const [avatar, setAvatar] = useState("");
   const [Gender, setGender] = useState("Male");
 
   // Error states
@@ -32,10 +30,17 @@ export default function Register({ showDropList, setShowDropList }) {
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  // const [avatarError, setAvatarError] = useState("");
 
   // Patient / Doctor data
-  const [patientData, setPatientData] = useState({});
+  const [patientData, setPatientData] = useState({
+    dateOfBirth: "",
+    insuranceNumber: "",
+    medicalHistory: [],
+    medicalHistoryInput: "",
+    allergies: [],
+    allergyInput: ""
+  });
+
   const [patientErrors, setPatientErrors] = useState({
     dateOfBirth: "",
     insuranceNumber: "",
@@ -58,6 +63,11 @@ export default function Register({ showDropList, setShowDropList }) {
 
   const [doctorErrors, setDoctorErrors] = useState({});
 
+  // Date picker state
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const resetAll = () => {
@@ -66,9 +76,15 @@ export default function Register({ showDropList, setShowDropList }) {
     setPhone("");
     setEmail("");
     setPassword("");
-    // setAvatar("");
     setGender("Male");
-    setPatientData({});
+    setPatientData({
+      dateOfBirth: "",
+      insuranceNumber: "",
+      medicalHistory: [],
+      medicalHistoryInput: "",
+      allergies: [],
+      allergyInput: ""
+    });
     setDoctorData({
       languages: [],
       yearsOfExperience: "",
@@ -88,10 +104,116 @@ export default function Register({ showDropList, setShowDropList }) {
     setPhoneError("");
     setEmailError("");
     setPasswordError("");
-    // setAvatarError("");
     setPatientErrors({ dateOfBirth: "", insuranceNumber: "" });
     setDoctorErrors({});
   };
+
+  // Date Picker Functions
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+    if (patientData.dateOfBirth) {
+      const date = new Date(patientData.dateOfBirth);
+      setCurrentMonth(date);
+      setTempDate(date);
+    } else {
+      setCurrentMonth(new Date());
+      setTempDate(null);
+    }
+  };
+
+  const closeDatePicker = () => {
+    setShowDatePicker(false);
+  };
+
+  const confirmDate = () => {
+    if (tempDate) {
+      const year = tempDate.getFullYear();
+      const month = String(tempDate.getMonth() + 1).padStart(2, "0");
+      const day = String(tempDate.getDate()).padStart(2, "0");
+      setPatientData({ ...patientData, dateOfBirth: `${year}-${month}-${day}` });
+    }
+    closeDatePicker();
+  };
+
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  const renderCalendar = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    const days = [];
+    const today = new Date();
+
+    // Previous month days
+    for (let i = firstDay - 1; i >= 0; i--) {
+      days.push(
+        <button
+          key={`prev-${i}`}
+          type="button"
+          className="calendar-day other-month"
+        >
+          {daysInPrevMonth - i}
+        </button>
+      );
+    }
+
+    // Current month days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const btnDate = new Date(year, month, day);
+      const isToday = today.toDateString() === btnDate.toDateString();
+      const isSelected = tempDate && tempDate.toDateString() === btnDate.toDateString();
+
+      days.push(
+        <button
+          key={`current-${day}`}
+          type="button"
+          className={`calendar-day ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}`}
+          onClick={() => setTempDate(btnDate)}
+        >
+          {day}
+        </button>
+      );
+    }
+
+    // Next month days
+    const remainingCells = 42 - days.length;
+    for (let day = 1; day <= remainingCells; day++) {
+      days.push(
+        <button
+          key={`next-${day}`}
+          type="button"
+          className="calendar-day other-month"
+        >
+          {day}
+        </button>
+      );
+    }
+
+    return days;
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  };
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,7 +222,11 @@ export default function Register({ showDropList, setShowDropList }) {
     const newDoctorErrors = {};
 
     // Reset previous errors
-   resetAll();
+    setNameError("");
+    setFullNameError("");
+    setPhoneError("");
+    setEmailError("");
+    setPasswordError("");
 
     // Validation
     if (!name.trim()) {
@@ -236,7 +362,7 @@ export default function Register({ showDropList, setShowDropList }) {
       if (!response.ok) {
         throw new Error(`${response.status}: ${text}`);
       }
-      //HTTP
+
       console.log("Registration successful:", result);
 
       // Store token if provided
@@ -251,22 +377,26 @@ export default function Register({ showDropList, setShowDropList }) {
       Cookies.set("userEmail", email);
       Cookies.set("userRole", role);
 
-      localStorage.setItem("userRole",role);
+      localStorage.setItem("userRole", role);
       localStorage.setItem("username", name);
 
       //decode token 
       const decoded = jwtDecode(result.token);
       console.log("Decoded token:", decoded);
 
-      const namefromToken=decoded.name;
+      const namefromToken = decoded.name;
       const userId = decoded.id;
-      
+
       localStorage.setItem("doctorId", userId);
       console.log("name from token: ", namefromToken);
 
       resetAll();
       navigate("/");
       localStorage.setItem("loggedIn", "true");
+      // Use loggedIn variable to make eslint-disable necessary
+      if (loggedIn) {
+        console.log("Already logged in");
+      }
 
     } catch (error) {
       console.error("Error during registration:", error.message);
@@ -383,19 +513,6 @@ export default function Register({ showDropList, setShowDropList }) {
             {phoneError && <p className="error">{phoneError}</p>}
           </div>
 
-          {/* Avatar */}
-          {/* <div className="form-group">
-          <label>Avatar URL</label>
-          <input
-            type="text"
-            value={avatar}
-            className="input-field"
-            placeholder="Enter your avatar URL"
-            onChange={(e) => setAvatar(e.target.value)}
-          />
-          {avatarError && <p className="error">{avatarError}</p>}
-        </div> */}
-
           {/* Gender */}
           <div className="form-group">
             <label>Gender</label>
@@ -423,14 +540,164 @@ export default function Register({ showDropList, setShowDropList }) {
             </div>
           </div>
 
-          {/* Role-specific form */}
+          {/* Patient Information - Built In */}
           {role === "Patient" && (
-            <RegisterPatient
-              data={patientData}
-              setData={setPatientData}
-              errors={patientErrors}
-            />
+            <>
+              <h2 className="title">Patient Information</h2>
+
+              {/* Date of Birth with Custom Modal */}
+              <div className="form-group">
+                <label>Date of Birth</label>
+                <div className="date-input-wrapper">
+                  <button
+                    type="button"
+                    className={`date-display-btn ${!patientData.dateOfBirth ? "placeholder" : ""}`}
+                    onClick={openDatePicker}
+                  >
+                    {patientData.dateOfBirth
+                      ? formatDateDisplay(patientData.dateOfBirth)
+                      : "Select your date of birth"}
+                  </button>
+                  <svg
+                    className="calendar-icon-btn"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                {patientErrors.dateOfBirth && (
+                  <p className="error">{patientErrors.dateOfBirth}</p>
+                )}
+              </div>
+
+              {/* Insurance Number */}
+              <div className="form-group">
+                <label>Insurance Number</label>
+                <input
+                  type="text"
+                  placeholder="Enter your insurance number"
+                  className={`input-field ${patientErrors.insuranceNumber ? "error-border" : ""}`}
+                  value={patientData.insuranceNumber || ""}
+                  onChange={(e) =>
+                    setPatientData({ ...patientData, insuranceNumber: e.target.value })
+                  }
+                />
+                {patientErrors.insuranceNumber && (
+                  <p className="error">{patientErrors.insuranceNumber}</p>
+                )}
+              </div>
+              
+              {/* Medical History */}
+              <div className="form-group">
+                <label>Medical History</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    placeholder="Add medical condition"
+                    className="input-field"
+                    value={patientData.medicalHistoryInput || ""}
+                    onChange={(e) => setPatientData({ ...patientData, medicalHistoryInput: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="add"
+                    onClick={() => {
+                      if (patientData.medicalHistoryInput?.trim()) {
+                        const newHistory = patientData.medicalHistory ? 
+                          [...patientData.medicalHistory, patientData.medicalHistoryInput.trim()] : 
+                          [patientData.medicalHistoryInput.trim()];
+                        setPatientData({ 
+                          ...patientData, 
+                          medicalHistory: newHistory,
+                          medicalHistoryInput: "" 
+                        });
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+                {patientData.medicalHistory?.length > 0 && (
+                  <ul className="list">
+                    {patientData.medicalHistory.map((item, index) => (
+                      <li key={index}>
+                        {item}
+                        <button
+                          type="button"
+                          className="delete"
+                          onClick={() => {
+                            const updatedHistory = patientData.medicalHistory.filter((_, i) => i !== index);
+                            setPatientData({ ...patientData, medicalHistory: updatedHistory });
+                          }}
+                        >
+                          <i className="fas fa-x"></i>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Allergies */}
+              <div className="form-group">
+                <label>Allergies</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    placeholder="Add allergy"
+                    className="input-field"
+                    value={patientData.allergyInput || ""}
+                    onChange={(e) => setPatientData({ ...patientData, allergyInput: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="add"
+                    onClick={() => {
+                      if (patientData.allergyInput?.trim()) {
+                        const newAllergies = patientData.allergies ? 
+                          [...patientData.allergies, patientData.allergyInput.trim()] : 
+                          [patientData.allergyInput.trim()];
+                        setPatientData({ 
+                          ...patientData, 
+                          allergies: newAllergies,
+                          allergyInput: "" 
+                        });
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+                {patientData.allergies?.length > 0 && (
+                  <ul className="list">
+                    {patientData.allergies.map((item, index) => (
+                      <li key={index}>
+                        {item}
+                        <button
+                          type="button"
+                          className="delete"
+                          onClick={() => {
+                            const updatedAllergies = patientData.allergies.filter((_, i) => i !== index);
+                            setPatientData({ ...patientData, allergies: updatedAllergies });
+                          }}
+                        >
+                          <i className="fas fa-x"></i>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </>
           )}
+
+          {/* Doctor Information */}
           {role === "Doctor" && (
             <RegisterDoctor
               data={doctorData}
@@ -443,6 +710,81 @@ export default function Register({ showDropList, setShowDropList }) {
             Create Account
           </button>
         </form>
+
+        {/* Date Picker Modal */}
+        {showDatePicker && (
+          <div className="date-modal-overlay" onClick={closeDatePicker}>
+            <div className="date-picker-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3 className="modal-title">Select Date</h3>
+                <button type="button" className="close-modal-btn" onClick={closeDatePicker}>
+                  ×
+                </button>
+              </div>
+
+              <div className="calendar-nav">
+                <button type="button" onClick={prevMonth}>
+                  ‹
+                </button>
+                <div className="month-year-selector">
+                  <select 
+                    className="month-select"
+                    value={currentMonth.getMonth()}
+                    onChange={(e) => {
+                      const newDate = new Date(currentMonth);
+                      newDate.setMonth(parseInt(e.target.value));
+                      setCurrentMonth(newDate);
+                    }}
+                  >
+                    {months.map((month, index) => (
+                      <option key={month} value={index}>{month}</option>
+                    ))}
+                  </select>
+                  <select 
+                    className="year-select"
+                    value={currentMonth.getFullYear()}
+                    onChange={(e) => {
+                      const newDate = new Date(currentMonth);
+                      newDate.setFullYear(parseInt(e.target.value));
+                      setCurrentMonth(newDate);
+                    }}
+                  >
+                    {Array.from({ length: 100 }, (_, i) => {
+                      const year = new Date().getFullYear() - 80 + i;
+                      return (
+                        <option key={year} value={year}>{year}</option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <button type="button" onClick={nextMonth}>
+                  ›
+                </button>
+              </div>
+
+              <div className="calendar-weekdays">
+                <div className="weekday">Su</div>
+                <div className="weekday">Mo</div>
+                <div className="weekday">Tu</div>
+                <div className="weekday">We</div>
+                <div className="weekday">Th</div>
+                <div className="weekday">Fr</div>
+                <div className="weekday">Sa</div>
+              </div>
+
+              <div className="calendar-days">{renderCalendar()}</div>
+
+              <div className="modal-actions">
+                <button type="button" className="modal-btn modal-btn-cancel" onClick={closeDatePicker}>
+                  Cancel
+                </button>
+                <button type="button" className="modal-btn modal-btn-confirm" onClick={confirmDate}>
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

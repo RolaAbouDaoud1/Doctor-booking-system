@@ -4,7 +4,6 @@
   box-sizing: border-box;
 }
 
-
 :root{
     --mainbuts: #006D77;
     --bg-highlights:#83C5BE ;
@@ -12,223 +11,1352 @@
     --secondaryAction:#E29578;
     --text-labels: #2F3E46;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-15px) rotate(1deg); }
+    66% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes shine {
+    from { left: -100%; }
+    to { left: 200%; }
+}
+
 .login-container{
-    background-color: var(--mainBg);
+    background: linear-gradient(135deg, #EDF6F9 0%, #c5dfe5 50%, #EDF6F9 100%);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 24px;
+    padding-top: 60px;
+    position: relative;
+    overflow: hidden;
 }
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(131, 197, 190, 0.2), transparent 70%);
+    animation: float 8s ease-in-out infinite;
+}
+
+.login-container::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0, 109, 119, 0.15), transparent 70%);
+    animation: float 10s ease-in-out infinite reverse;
+}
+
 .head{
     width: 100%;
-    margin: 10px;
+    max-width: 1100px;
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: row;
-    gap:30px;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
 }
+
 .back-btn{
-    background-color: var(--bg-highlights);
+    background: linear-gradient(135deg, var(--bg-highlights) 0%, #5fa39f 100%);
     border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
+    border-radius: 14px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    font-size: 22px;
     color: white; 
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
     text-decoration: none;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 16px rgba(0, 109, 119, 0.25), 0 0 0 0 rgba(131, 197, 190, 0.4);
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
 }
+
+.back-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.back-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: translateY(-50%);
+}
+
+.back-btn:hover::after {
+    animation: shine 0.8s ease;
+}
+
+.back-btn:hover::before {
+    opacity: 1;
+}
+
 .goback{
     background: none;
     border: none;
-    width: 50px;
-    height: 50px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.back-btn:hover, .signin-btn:hover{
-    background-color:#004f56;
+
+.back-btn:hover{
+    transform: translateX(-6px) scale(1.05);
+    box-shadow: 0 6px 24px rgba(0, 109, 119, 0.35), 0 0 0 8px rgba(131, 197, 190, 0.1);
 }
+
+.back-btn:hover .goback {
+    transform: translateX(-2px);
+}
+
+.back-btn:active {
+    transform: translateX(-3px) scale(1.02);
+}
+
 .login-title{
-    font-size: 2rem;
+    font-size: clamp(28px, 4vw, 40px);
     font-weight: 700;
     color: var(--mainbuts);
-    margin-top: 35px;
-}
-.role-section ,form{
-    background: white;
-    border-radius: 20px;
+    margin: 0;
+    text-align: center;
     width: 100%;
+    letter-spacing: -0.8px;
+    animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.login-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--mainbuts), transparent);
+    border-radius: 2px;
+}
+
+.role-section, form{
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 1100px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 10px;
-    margin: 10px;
+    padding: 48px;
+    margin-bottom: 24px;
+    margin-top: 40px;
+    box-shadow: 0 10px 40px rgba(0, 109, 119, 0.12), 0 0 1px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.role-section::before, form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bg-highlights), var(--mainbuts), var(--bg-highlights));
+    border-radius: 24px 24px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-section:hover::before, form:hover::before {
+    opacity: 1;
+}
+
+.role-section:hover, form:hover {
+    box-shadow: 0 20px 60px rgba(0, 109, 119, 0.18), 0 0 1px rgba(0, 0, 0, 0.05);
+    transform: translateY(-4px);
+}
+
 .iam{
     color: var(--text-labels);
     font-weight: 700;
+    font-size: 17px;
     text-align: left;
+    margin-bottom: 20px;
 }
-.role-buts,.signin-btn, .create{
-    padding: 10px;
-    margin: 10px;
-    display: flex;
-    flex-direction: row;
-    gap: 3px;
-    justify-content: center;
+
+.role-buts{
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
 }
-.role-buts button, .signin-btn, .create{
+
+.role-buts button{
     cursor: pointer;
     text-align: center;
-    padding: 20px;
-    border: none;
-    border-radius: 20px;
-    width: 350px;
+    padding: 22px;
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
     color: var(--text-labels);
-    background-color: var(--mainBg);
+    background-color: white;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
 }
-.role-buts .active , .signin-btn{
-    background-color: var(--mainbuts);
+
+.role-buts button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(131, 197, 190, 0.1) 0%, rgba(0, 109, 119, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-buts button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transform: translateY(-50%);
+}
+
+.role-buts button:hover::after {
+    animation: shine 0.8s ease;
+}
+
+.role-buts button:hover::before {
+    opacity: 1;
+}
+
+.role-buts button:hover {
+    border-color: var(--bg-highlights);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 109, 119, 0.15);
+}
+
+.role-buts .active{
+    background: linear-gradient(135deg, var(--mainbuts) 0%, #008b97 100%);
     color: white;
+    border-color: var(--mainbuts);
+    box-shadow: 0 8px 24px rgba(0, 109, 119, 0.4);
+    animation: float 3s ease-in-out infinite;
 }
-form,.patient-section,.doctor-section{
+
+.role-buts .active::before {
+    opacity: 0;
+}
+
+.role-buts .active:hover{
+    background: linear-gradient(135deg, #005862 0%, #007380 100%);
+    border-color: #005862;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 109, 119, 0.45);
+    animation: none;
+}
+
+form, .patient-section, .doctor-section{
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
+
 .title{
     color: var(--mainbuts);
     font-weight: 700;
-    font-size: 2rem;
-    text-align: left;
+    font-size: clamp(26px, 3vw, 34px);
+    text-align: center;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
 }
+
 .form-group{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
+
+.form-group:nth-child(2) { animation-delay: 0.1s; }
+.form-group:nth-child(3) { animation-delay: 0.15s; }
+.form-group:nth-child(4) { animation-delay: 0.2s; }
+.form-group:nth-child(5) { animation-delay: 0.25s; }
+
 .form-group label{
     color: var(--text-labels);
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 14px;
     text-align: left;
+    transition: all 0.3s ease;
 }
+
+.form-group:focus-within label {
+    color: var(--mainbuts);
+    transform: translateX(2px);
+}
+
 .input-field{
-    border: none;
-    border-radius: 30px;
-    padding: 30px;
-    background-color: var(--mainBg);
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 15px;
+    background: linear-gradient(135deg, white 0%, #fafbfc 100%);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: inherit;
+    color: var(--text-labels);
+    position: relative;
 }
+
+.input-field:focus{
+    outline: none;
+    border-color: var(--mainbuts);
+    box-shadow: 0 0 0 4px rgba(0, 109, 119, 0.1), 0 4px 12px rgba(0, 109, 119, 0.15);
+    transform: translateY(-2px);
+    background: white;
+}
+
+.input-field:hover{
+    border-color: var(--bg-highlights);
+    transform: translateY(-1px);
+}
+
+.input-field::placeholder {
+    color: #9ca3af;
+}
+
+/* Hide default date input but keep it functional */
+input[type="date"].input-field {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+}
+
+/* Modern Date Input Styling - Custom Button */
+.date-input-wrapper {
+    position: relative;
+}
+
+.date-display-btn {
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    background: linear-gradient(135deg, white 0%, #fafbfc 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    color: var(--text-labels);
+}
+
+.date-display-btn.placeholder {
+    color: #9ca3af;
+}
+
+.date-display-btn:hover {
+    border-color: var(--bg-highlights);
+    transform: translateY(-1px);
+}
+
+.date-display-btn:focus {
+    outline: none;
+    border-color: var(--mainbuts);
+    box-shadow: 0 0 0 4px rgba(0, 109, 119, 0.1);
+    transform: translateY(-2px);
+}
+
+.calendar-icon-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--mainbuts);
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+}
+
+/* Date Picker Modal */
+.date-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+    padding: 20px;
+}
+
+.date-picker-modal {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-title {
+    color: var(--mainbuts);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #6b7280;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.close-modal-btn:hover {
+    background: #f3f4f6;
+    color: var(--mainbuts);
+    transform: rotate(90deg);
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav button {
+    background: var(--bg-highlights);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.calendar-nav button:hover {
+    background: var(--mainbuts);
+    transform: scale(1.1);
+}
+
+.month-year-selector {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.month-select,
+.year-select {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 12px;
+    background: white;
+    color: var(--text-labels);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 28px;
+}
+
+.month-select:hover,
+.year-select:hover {
+    border-color: var(--bg-highlights);
+}
+
+.month-select:focus,
+.year-select:focus {
+    outline: none;
+    border-color: var(--mainbuts);
+    box-shadow: 0 0 0 2px rgba(0, 109, 119, 0.1);
+}
+
+.month-select {
+    width: 85px;
+}
+
+.year-select {
+    width: 65px;
+}
+
+/* Make dropdown lists compact */
+.month-select option,
+.year-select option {
+    padding: 2px 4px;
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+/* Limit dropdown height */
+.year-select {
+    max-height: 120px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 8px 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border: none;
+    background: #f9fafb;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-labels);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-day:hover:not(.other-month) {
+    background: var(--bg-highlights);
+    color: white;
+    transform: scale(1.1);
+}
+
+.calendar-day.selected {
+    background: var(--mainbuts);
+    color: white;
+    font-weight: 700;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--mainbuts);
+}
+
+.calendar-day.other-month {
+    color: #d1d5db;
+    cursor: default;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.modal-btn-cancel {
+    background: #f3f4f6;
+    color: var(--text-labels);
+}
+
+.modal-btn-cancel:hover {
+    background: #e5e7eb;
+}
+
+.modal-btn-confirm {
+    background: linear-gradient(135deg, var(--mainbuts) 0%, #008b97 100%);
+    color: white;
+}
+
+.modal-btn-confirm:hover {
+    background: linear-gradient(135deg, #005862 0%, #007380 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 109, 119, 0.3);
+}
+
+/* Time Input Styling */
+input[type="time"].input-field {
+    cursor: pointer;
+    position: relative;
+    background: linear-gradient(135deg, white 0%, #fafbfc 100%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23006D77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 48px;
+}
+
+input[type="time"].input-field::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 16px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+}
+
+input[type="time"].input-field:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23005862' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+input[type="time"].input-field::-webkit-datetime-edit {
+    color: var(--text-labels);
+    font-weight: 500;
+}
+
+input[type="time"].input-field::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+}
+
+input[type="time"]:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='%23006D77' stroke='%23006D77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+input[type="time"]::-webkit-inner-spin-button {
+    display: none;
+}
+
+input[type="time"]::-webkit-clear-button {
+    display: none;
+}
+
 .label-radio{
     display: flex;
     flex-direction: row;
-    gap: 50px;
-    background-color: var(--mainBg);
-    padding: 30px;
-    border-radius: 30px;
+    flex-wrap: wrap;
+    gap: 32px;
+    background: linear-gradient(135deg, white 0%, #fafbfc 100%);
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.label-radio:hover {
+    border-color: var(--bg-highlights);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 109, 119, 0.08);
+}
+
+.label-radio label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-labels);
+    transition: all 0.2s ease;
+}
+
+.label-radio label:hover {
+    color: var(--mainbuts);
+    transform: scale(1.05);
+}
+
 input[type="radio"]{
-    accent-color: #4CAF50;
+    accent-color: var(--mainbuts);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+input[type="radio"]:hover {
+    transform: scale(1.2);
+}
+
 .password-wrapper{
     position: relative;
     width: 100%;
 }
+
 .password-wrapper .input-field{
     width: 100%;
-    padding-right:40px ;
-    box-sizing: border-box;
+    padding-right: 52px;
 }
+
 .password-wrapper .eye-icon {
-  position: absolute;
-  top: 50%;
-  right: 30px; 
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #888;
+    position: absolute;
+    top: 50%;
+    right: 18px; 
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 20px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.password-wrapper .eye-icon:hover {
+    color: var(--mainbuts);
+    transform: translateY(-50%) scale(1.2);
+}
+
 .forgot{
     text-align: right;
+    margin-top: -8px;
 }
+
 .forgotpass{
+    color: var(--mainbuts);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.forgotpass::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--mainbuts);
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.forgotpass:hover::after {
+    width: 100%;
+}
+
+.forgotpass:hover {
+    color: #005862;
+}
+
+.signin-btn, .create{
+    cursor: pointer;
+    text-align: center;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.signin-btn::before, .create::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.signin-btn::after, .create::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: translateY(-50%);
+}
+
+.signin-btn:hover::after, .create:hover::after {
+    animation: shine 0.8s ease;
+}
+
+.signin-btn:hover::before, .create:hover::before {
+    opacity: 1;
+}
+
+.signin-btn{
+    background: linear-gradient(135deg, var(--mainbuts) 0%, #008b97 100%);
+    color: white;
+    margin: 12px 0;
+    box-shadow: 0 8px 24px rgba(0, 109, 119, 0.35);
+}
+
+.signin-btn:hover{
+    background: linear-gradient(135deg, #005862 0%, #007380 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 109, 119, 0.45);
+}
+
+.signin-btn:active, .create:active {
+    transform: translateY(-1px) scale(1);
+}
+
+.signup-text{
     color: var(--text-labels);
-    font-weight: 700;
+    text-align: center;
+    font-size: 14px;
+}
+
+.signup-text a{
+    color: var(--mainbuts);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.signup-text a:hover {
+    color: #005862;
     text-decoration: underline;
 }
-.signin-btn, .create{
-    justify-self: center;
-    transition: all 0.3s ease-in-out;
-}
-.signup-text, .signup-text a{
-    color: var(--text-labels);
-    
-}
-.signup-text a{
-text-decoration: underline;
-}
+
 .reset-text{
     color: var(--mainbuts);
     font-weight: 700;
+    font-size: 14px;
 }
+
 .error{
-    color: red ;
-    font-size: 0.8rem;
-    margin-top: 10px ;
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 500;
 }
+
 .error-border {
-  border: 1px solid red !important;
+    border-color: #dc2626 !important;
+    background: #fef2f2 !important;
 }
+
 .create{
-    background-color: var(--mainbuts);
-    color:white;
-    align-self: center;
+    background: linear-gradient(135deg, var(--mainbuts) 0%, #008b97 100%);
+    color: white;
+    box-shadow: 0 8px 24px rgba(0, 109, 119, 0.35);
 }
+
 .create:hover{
-    background-color:#004f56;
+    background: linear-gradient(135deg, #005862 0%, #007380 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 109, 119, 0.45);
 }
+
 .add{
     cursor: pointer;
     text-align: center;
-    padding: 20px;
+    padding: 16px 28px;
     border: none;
-    border-radius: 20px;
-    width: 150px;
+    border-radius: 12px;
+    min-width: 130px;
+    font-size: 15px;
+    font-weight: 600;
     color: white;
-    background-color: var(--mainbuts);
+    background: linear-gradient(135deg, var(--mainbuts) 0%, #008b97 100%);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 16px rgba(0, 109, 119, 0.3);
+    position: relative;
+    overflow: hidden;
 }
+
+.add::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.add::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: translateY(-50%);
+}
+
+.add:hover::after {
+    animation: shine 0.8s ease;
+}
+
+.add:hover::before {
+    opacity: 1;
+}
+
+.add:hover {
+    background: linear-gradient(135deg, #005862 0%, #007380 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 109, 119, 0.4);
+}
+
+.add:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
 .list{
     display: flex;
     flex-direction: row;
-    gap: 20px;
-    list-style-type:none;
-    font-weight: 700;
-    font-size: 1.2rem;
-    overflow-x: scroll;
+    gap: 14px;
+    list-style-type: none;
+    font-weight: 600;
+    font-size: 14px;
+    overflow-x: auto;
+    padding: 14px 0;
+    margin: 0;
+    -webkit-overflow-scrolling: touch;
 }
+
+.list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.list::-webkit-scrollbar-track {
+    background: linear-gradient(90deg, #f3f4f6, #e5e7eb, #f3f4f6);
+    border-radius: 8px;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--bg-highlights), var(--mainbuts));
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--mainbuts), #005862);
+}
+
+.list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, white 0%, #fafbfc 100%);
+    padding: 12px 18px;
+    border-radius: 12px;
+    white-space: nowrap;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.list li:hover {
+    border-color: var(--bg-highlights);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 109, 119, 0.15);
+}
+
 .fa-x{
     color: var(--mainbuts);
-    font-size: 1.3rem;
+    font-size: 14px;
+    transition: all 0.3s ease;
 }
+
 .delete{
-    background-color: var(--bg-highlights);
-    padding: 10px;
-    border: var(--bg-highlights);
-    border-radius: 20px;
+    background: linear-gradient(135deg, var(--bg-highlights), #6db5b1);
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transform: scale(0.6);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    box-shadow: 0 2px 8px rgba(131, 197, 190, 0.3);
 }
+
+.delete:hover {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.delete:hover .fa-x {
+    color: white;
+}
+
+.delete:active {
+    transform: scale(1.1) rotate(90deg);
+}
+
 .input-with-button{
     display: flex;
     flex-direction: row;
-    align-items: left;
-    gap: 11px;
+    align-items: center;
+    gap: 14px;
 }
 
-/* Responsive styles for desktop */
-@media screen and (min-width: 1024px) {
+.input-with-button .input-field {
+    flex: 1;
+}
+
+/* Responsive Design */
+
+/* Small Mobile - Fixed Calendar Responsive Design */
+@media screen and (max-width: 480px) {
+    .date-picker-modal {
+        padding: 20px 16px;
+        max-width: calc(100vw - 32px);
+        margin: 0 16px;
+        box-sizing: border-box;
+    }
+
+    .modal-title {
+        font-size: 18px;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+        min-height: 36px;
+        min-width: 36px;
+        padding: 0;
+    }
+
+    .weekday {
+        font-size: 11px;
+        padding: 6px 0;
+    }
+
+    .calendar-nav button {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        min-width: 32px;
+        flex-shrink: 0;
+    }
+
+    .calendar-nav {
+        padding: 0 4px;
+    }
+
+    .modal-actions {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .calendar-days {
+        gap: 4px;
+        padding: 0 2px;
+    }
+
+    .calendar-weekdays {
+        gap: 4px;
+        padding: 0 2px;
+    }
+
+    .modal-header {
+        margin-bottom: 20px;
+        padding: 0 4px;
+    }
+
+    .close-modal-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 24px;
+        min-width: 32px;
+        flex-shrink: 0;
+    }
+
+    .month-year-selector {
+        gap: 4px;
+    }
+
+    .month-select,
+    .year-select {
+        font-size: 11px;
+        padding: 3px 4px;
+        height: 24px;
+    }
+
+    .month-select {
+        width: 75px;
+    }
+
+    .year-select {
+        width: 55px;
+    }
+}
+
+/* Extra Small Mobile - Very small screens */
+@media screen and (max-width: 360px) {
+    .date-picker-modal {
+        padding: 16px 12px;
+        max-width: calc(100vw - 24px);
+        margin: 0 12px;
+    }
+
+    .calendar-day {
+        font-size: 11px;
+        min-height: 32px;
+        min-width: 32px;
+    }
+
+    .weekday {
+        font-size: 10px;
+        padding: 4px 0;
+    }
+
+    .calendar-nav button {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+
+    .modal-btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .modal-title {
+        font-size: 16px;
+    }
+
+    .month-select,
+    .year-select {
+        font-size: 10px;
+        padding: 2px 3px;
+        height: 22px;
+    }
+
+    .month-select {
+        width: 65px;
+    }
+
+    .year-select {
+        width: 50px;
+    }
+}
+
+/* Mobile - stack role buttons and fix general layout */
+@media screen and (max-width: 640px) {
+    .role-section, form {
+        padding: 20px;
+        margin-left: 0;
+        margin-right: 0;
+        width: calc(100% - 40px);
+    }
     
+    .role-buts {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .head {
+        margin-bottom: 24px;
+        padding: 0 10px;
+    }
+    
+    .back-btn {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        left: 10px;
+    }
+
+    .date-picker-modal {
+        padding: 24px 16px;
+        max-width: calc(100vw - 40px);
+    }
+
+    .calendar-days {
+        gap: 5px;
+        padding: 0 3px;
+    }
+
+    .calendar-weekdays {
+        gap: 5px;
+        padding: 0 3px;
+    }
+
+    .input-with-button {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-with-button .input-field {
+        width: 100%;
+    }
+
+    .input-with-button .add {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .list {
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .list li {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+}
+
+/* Fix for landscape mode on small screens */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .date-modal-overlay {
+        align-items: flex-start;
+        padding-top: 20px;
+        overflow-y: auto;
+    }
+
+    .date-picker-modal {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Ensure buttons don't overflow on very small screens */
+@media screen and (max-width: 320px) {
+    .date-picker-modal {
+        padding: 12px 10px;
+        max-width: calc(100vw - 20px);
+        margin: 0 10px;
+    }
+
+    .calendar-day {
+        min-height: 28px;
+        min-width: 28px;
+        font-size: 10px;
+    }
+
+    .weekday {
+        font-size: 9px;
+    }
+
+    .modal-btn {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+/* Tablet styles */
+@media screen and (min-width: 768px) {
+    .login-container {
+        padding: 40px;
+        padding-top: 80px;
+    }
+}
+
+/* Desktop styles */
+@media screen and (min-width: 1024px) {
+    .login-container {
+        padding: 60px;
+        padding-top: 100px;
+    }
+    
+    .role-section, form {
+        padding: 56px;
+    }
 }

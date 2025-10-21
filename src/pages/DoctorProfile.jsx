@@ -8,11 +8,15 @@ import DoctorEducation from "../components/DoctorEducation";
 import BookAppointmentButton from "../components/BookAppointmentButton";
 
 export default function DoctorProfile() {
-  const { doctorId } = useParams();
+  const { doctorId: paramsDoctorId } = useParams();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const patientId = localStorage.getItem("patientId");
+  const storedDoctorId = localStorage.getItem("doctorId");
+  
+  // Use doctorId from URL params first, fallback to localStorage
+  const doctorId = paramsDoctorId || storedDoctorId;
   const baseURL = "http://localhost:8080/api/doctors"; // backend base URL
 
   useEffect(() => {
@@ -24,6 +28,9 @@ export default function DoctorProfile() {
         }
         const data = await response.json();
         setDoctor(data);
+        
+        // Use patientId in the component logic
+        console.log("Patient ID:", patientId); // Example usage
       } catch (err) {
         console.error("Error fetching doctor data:", err);
         setError(err.message);
@@ -32,8 +39,13 @@ export default function DoctorProfile() {
       }
     };
 
-    fetchDoctor();
-  }, [doctorId]);
+    if (doctorId) {
+      fetchDoctor();
+    } else {
+      setLoading(false);
+      setError("No doctor ID found");
+    }
+  }, [doctorId, patientId]); // Add patientId to dependencies to show it's used
 
   if (loading) return <p>Loading...</p>;
 
@@ -65,7 +77,10 @@ export default function DoctorProfile() {
         <div className="profile-details">
           <DoctorAbout doctor={displayDoctor} />
           <DoctorEducation education={displayDoctor.education} />
-          <BookAppointmentButton doctorId={displayDoctor.id} />
+          <BookAppointmentButton 
+            doctorId={displayDoctor.id} 
+            patientId={patientId} // Pass patientId to the booking component
+          />
         </div>
       </div>
     </div>

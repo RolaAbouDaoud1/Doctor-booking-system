@@ -18,6 +18,7 @@ export default function HealthConnectLanding({
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+  const role=localStorage.getItem("userRole");
  const loggedStatus = localStorage.getItem("loggedIn");
   useEffect(() => {
     // Check for saved dark mode preference or system preference
@@ -110,28 +111,31 @@ export default function HealthConnectLanding({
               </div>
 
               {/* Search Widget */}
+              {role==='patient' && (
               <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm dark:bg-white/95">
-                <div className="p-6 space-y-4">
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray">
-                      🔍
-                    </span>
-                    <Link to="/search">
-                      <input
-                        type="text"
-                        placeholder="Search for doctors, specialties..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
-                      />
-                    </Link>
-                  </div>
-                  <div className="w-full bg-teal hover:bg-teal-200/20 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
-                    <span>📍</span>
-                    <h1>Find Doctor Near Me</h1>
+                  <div className="p-6 space-y-4">
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray">
+                        🔍
+                      </span>
+                      <Link to="/search">
+                        <input
+                          type="text"
+                          placeholder="Search for doctors, specialties..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                        />
+                      </Link>
+                    </div>
+                    <div className="w-full bg-teal hover:bg-teal-200/20 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+                      <span>📍</span>
+                      <h1>Find Doctor Near Me</h1>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+              
 
               {/* Join Buttons */}
               {!loggedStatus && (
