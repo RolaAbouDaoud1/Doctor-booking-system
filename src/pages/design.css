@@ -299,7 +299,7 @@ body {
 
 .role-buts button:hover {
     border-color: var(--bg-highlights);
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px) scale(1.01);
     box-shadow: 0 8px 24px rgba(0, 109, 119, 0.15);
 }
 
@@ -318,7 +318,7 @@ body {
 .role-buts .active:hover{
     background: linear-gradient(135deg, #005862 0%, #007380 100%);
     border-color: #005862;
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px) scale(1.01);
     box-shadow: 0 12px 32px rgba(0, 109, 119, 0.45);
     animation: none;
 }
@@ -391,8 +391,6 @@ form, .patient-section, .doctor-section{
 .input-field::placeholder {
     color: #9ca3af;
 }
-
-/* Hide default date input but keep it functional */
 input[type="date"].input-field {
     position: absolute;
     opacity: 0;
@@ -400,8 +398,6 @@ input[type="date"].input-field {
     width: 0;
     height: 0;
 }
-
-/* Modern Date Input Styling - Custom Button */
 .date-input-wrapper {
     position: relative;
 }
@@ -446,8 +442,6 @@ input[type="date"].input-field {
     width: 20px;
     height: 20px;
 }
-
-/* Date Picker Modal */
 .date-modal-overlay {
     position: fixed;
     top: 0;
@@ -575,18 +569,15 @@ input[type="date"].input-field {
 .year-select {
     width: 65px;
 }
-
-/* Make dropdown lists compact */
 .month-select option,
 .year-select option {
     padding: 2px 4px;
     font-size: 11px;
     line-height: 1.2;
 }
-
-/* Limit dropdown height */
 .year-select {
-    max-height: 120px;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .calendar-weekdays {
@@ -683,8 +674,6 @@ input[type="date"].input-field {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(0, 109, 119, 0.3);
 }
-
-/* Time Input Styling */
 input[type="time"].input-field {
     cursor: pointer;
     position: relative;
@@ -1093,10 +1082,6 @@ input[type="radio"]:hover {
 .input-with-button .input-field {
     flex: 1;
 }
-
-/* Responsive Design */
-
-/* Small Mobile - Fixed Calendar Responsive Design */
 @media screen and (max-width: 480px) {
     .date-picker-modal {
         padding: 20px 16px;
@@ -1180,14 +1165,17 @@ input[type="radio"]:hover {
 
     .month-select {
         width: 75px;
+        font-size: 10px;
+        padding: 2px 3px;
     }
 
     .year-select {
-        width: 55px;
+        width: 50px;
+        font-size: 10px;
+        padding: 2px 3px;
+        max-height: 100px;
     }
 }
-
-/* Extra Small Mobile - Very small screens */
 @media screen and (max-width: 360px) {
     .date-picker-modal {
         padding: 16px 12px;
@@ -1230,14 +1218,17 @@ input[type="radio"]:hover {
 
     .month-select {
         width: 65px;
+        font-size: 9px;
+        padding: 2px 2px;
     }
 
     .year-select {
-        width: 50px;
+        width: 45px;
+        font-size: 9px;
+        padding: 2px 2px;
+        max-height: 90px;
     }
 }
-
-/* Mobile - stack role buttons and fix general layout */
 @media screen and (max-width: 640px) {
     .role-section, form {
         padding: 20px;
@@ -1302,8 +1293,6 @@ input[type="radio"]:hover {
         font-size: 13px;
     }
 }
-
-/* Fix for landscape mode on small screens */
 @media screen and (max-height: 500px) and (orientation: landscape) {
     .date-modal-overlay {
         align-items: flex-start;
@@ -1316,8 +1305,6 @@ input[type="radio"]:hover {
         overflow-y: auto;
     }
 }
-
-/* Ensure buttons don't overflow on very small screens */
 @media screen and (max-width: 320px) {
     .date-picker-modal {
         padding: 12px 10px;
@@ -1340,16 +1327,12 @@ input[type="radio"]:hover {
         font-size: 12px;
     }
 }
-
-/* Tablet styles */
 @media screen and (min-width: 768px) {
     .login-container {
         padding: 40px;
         padding-top: 80px;
     }
 }
-
-/* Desktop styles */
 @media screen and (min-width: 1024px) {
     .login-container {
         padding: 60px;

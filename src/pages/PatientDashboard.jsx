@@ -281,14 +281,14 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     const success = await bookAppointment(newAppointmentData);
 
     if (success) {
-      navigate("/doctor-search", {
+      navigate("/book", {
         state: {
           message: "Ready to book a new appointment!",
           prefillData: newAppointmentData,
         },
       });
     } else {
-      navigate("/doctor-search", {
+      navigate("/book", {
         state: {
           error: "Unable to prepare appointment booking. Please try again.",
         },
