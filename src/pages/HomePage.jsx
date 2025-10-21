@@ -13,13 +13,26 @@ export default function HealthConnectLanding({
   showDropList,
   setShowDropList,
 }) {
-  const loggedInside = localStorage.getItem("loggedIn");
-  // logic for logging in !!!!!!
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
-  const role=localStorage.getItem("userRole");
- const loggedStatus = localStorage.getItem("loggedIn");
+
+const [role, setRole] = useState(() =>
+  localStorage.getItem("role")?.toLowerCase() || null
+);
+const [loggedStatus, setLoggedStatus] = useState(() =>
+  localStorage.getItem("loggedIn")?.toLowerCase() === "true"
+);
+
+
+useEffect(() => {
+  const storedRole = localStorage.getItem("role")?.toLowerCase();
+  const storedLogged = localStorage.getItem("loggedIn")?.toLowerCase() === "true";
+
+  setRole(storedRole);
+  setLoggedStatus(storedLogged);
+}, []);
+
   useEffect(() => {
     // Check for saved dark mode preference or system preference
     const savedDarkMode = localStorage.getItem("darkMode");
@@ -111,7 +124,7 @@ export default function HealthConnectLanding({
               </div>
 
               {/* Search Widget */}
-              {role==='patient' && (
+              {loggedStatus && role==='patient' && (
               <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm dark:bg-white/95">
                   <div className="p-6 space-y-4">
                     <div className="relative">

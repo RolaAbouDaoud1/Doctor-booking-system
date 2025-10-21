@@ -1,16 +1,35 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import NavBarLg from "../components/sections/NavBarLg";
 import { jwtDecode } from "jwt-decode";
 import "./design.css";
 
 export default function Register({ showDropList, setShowDropList }) {
-  const navigate = useNavigate();
+  
   const baseUrl = "http://localhost:8080";
-  const [token, setToken] = useState(Cookies.get("token") || "");
+
+  // Clear previous user data on component mount
+  // useEffect(() => {
+  //   // Clear cookies
+  //   Cookies.remove("token");
+  //   Cookies.remove("userEmail");
+  //   Cookies.remove("role");
+
+  //   // Clear localStorage
+  //   localStorage.removeItem("role");
+  //   localStorage.removeItem("username");
+  //   localStorage.removeItem("patientId");
+  //   localStorage.removeItem("doctorId");
+  //   localStorage.removeItem("specialties");
+  //   localStorage.removeItem("loggedIn");
+
+  //   console.log("Previous user data cleared");
+  // }, []);
+
+  const [token, setToken] = useState("");
 
   // Basic info
   // eslint-disable-next-line no-unused-vars
@@ -228,7 +247,7 @@ export default function Register({ showDropList, setShowDropList }) {
     setEmailError("");
     setPasswordError("");
 
-    // Validation
+    // Basic validation
     if (!name.trim()) {
       setNameError("Name is required");
       valid = false;
@@ -266,6 +285,7 @@ export default function Register({ showDropList, setShowDropList }) {
       valid = false;
     }
 
+    // Patient-specific validation
     if (role === "Patient") {
       if (!patientData.dateOfBirth) {
         newPatientErrors.dateOfBirth = "Date of birth is required";
@@ -284,6 +304,7 @@ export default function Register({ showDropList, setShowDropList }) {
       setPatientErrors(newPatientErrors);
     }
 
+    // Doctor-specific validation
     if (role === "Doctor") {
       if (!doctorData.languages.length) {
         newDoctorErrors.languages = "Please add at least one language";
@@ -375,12 +396,12 @@ export default function Register({ showDropList, setShowDropList }) {
       }
 
       Cookies.set("userEmail", email);
-      Cookies.set("userRole", role);
+      Cookies.set("role", role);
 
       localStorage.setItem("userRole", role);
       localStorage.setItem("username", name);
 
-      //decode token 
+      // Decode token
       const decoded = jwtDecode(result.token);
       console.log("Decoded token:", decoded);
 
@@ -391,7 +412,6 @@ export default function Register({ showDropList, setShowDropList }) {
       console.log("name from token: ", namefromToken);
 
       resetAll();
-      navigate("/");
       localStorage.setItem("loggedIn", "true");
       // Use loggedIn variable to make eslint-disable necessary
       if (loggedIn) {
@@ -403,6 +423,7 @@ export default function Register({ showDropList, setShowDropList }) {
       alert("Registration failed. Please try again.");
     }
   };
+
 
   return (
     <>
