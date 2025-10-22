@@ -9,29 +9,40 @@ import NavBarLg from "../components/sections/NavBarLg";
 import StatSection from "../components/sections/StatSection";
 import TestimonialSection from "../components/sections/TestimonialSection";
 import { features } from "../data/homePage";
-
-export default function HealthConnectLanding({ showDropList, setShowDropList }) {
+export default function HealthConnectLanding({
+  showDropList,
+  setShowDropList,
+}) {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
 
-    const role=localStorage.getItem("role")?.toLowerCase() || null
-    const loggedIn=localStorage.getItem("loggedIn")?.toLowerCase() === "true"
-
-  // Sync state with localStorage on mount
-  // useEffect(() => {
-  //   const storedRole = localStorage.getItem("role")?.toLowerCase();
-  //   const storedLogged = localStorage.getItem("loggedIn")?.toLowerCase() === "true";
-  //   setRole(storedRole);
-  //   setLoggedStatus(storedLogged);
-  // }, []);
+const [role, setRole] = useState(() =>
+  localStorage.getItem("role")?.toLowerCase() || null
+);
+const [loggedStatus, setLoggedStatus] = useState(() =>
+  localStorage.getItem("loggedIn")?.toLowerCase() === "true"
+);
 
 
-  // Dark mode detection
+useEffect(() => {
+  const storedRole = localStorage.getItem("role")?.toLowerCase();
+  const storedLogged = localStorage.getItem("loggedIn")?.toLowerCase() === "true";
+
+  setRole(storedRole);
+  setLoggedStatus(storedLogged);
+}, []);
+
   useEffect(() => {
+    // Check for saved dark mode preference or system preference
     const savedDarkMode = localStorage.getItem("darkMode");
-    const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const shouldUseDarkMode = savedDarkMode ? JSON.parse(savedDarkMode) : systemDarkMode;
+    const systemDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    const shouldUseDarkMode = savedDarkMode
+      ? JSON.parse(savedDarkMode)
+      : systemDarkMode;
 
     if (shouldUseDarkMode) {
       setDarkMode(true);
@@ -45,7 +56,11 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
 
   return (
     <>
-      <div className={`min-h-screen transition-colors duration-300 ${darkMode ? "bg-teal" : "bg-color"}`}>
+      <div
+        className={`min-h-screen transition-colors duration-300 ${
+          darkMode ? "bg-teal" : "bg-color"
+        }`}
+      >
         {/* Navigation */}
         <NavBarLg
           darkMode={darkMode}
@@ -55,7 +70,11 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
         />
 
         {/* Hero Section */}
-        <section className={`relative overflow-hidden ${darkMode ? "bg-teal" : "bg-color"}`}>
+        <section
+          className={`relative overflow-hidden ${
+            darkMode ? "bg-teal" : "bg-color"
+          }`}
+        >
           <div className="absolute inset-0 grid-pattern opacity-50"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
             <div className="text-center space-y-8">
@@ -68,7 +87,10 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
                       alt="HealthConnect Logo"
                       className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover"
                       onError={(e) => {
-                        e.target.style.display = "none";
+                        const target = e.target;
+                        target.style.display = "none";
+                        target.innerHTML =
+                          '<div class="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-teal flex items-center justify-center text-white text-3xl">🏥</div>';
                       }}
                     />
                   </div>
@@ -77,25 +99,38 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
                   </div>
                 </div>
               </div>
-
               {/* Hero Text */}
               <div className="space-y-4">
                 <h1 className="text-4xl lg:text-6xl font-bold text-balance">
-                  <span className={`${darkMode ? "text-white" : "text-gray"}`}>Your Health,</span>
+                  <span className={`${darkMode ? "text-white" : "text-gray"}`}>
+                    Your Health,
+                  </span>
                   <br />
-                  <span className={`${darkMode ? "text-light-teal" : "text-teal"}`}>Our Priority</span>
+                  <span
+                    className={`${darkMode ? "text-light-teal" : "text-teal"}`}
+                  >
+                    Our Priority
+                  </span>
                 </h1>
-                <p className={`text-lg lg:text-xl max-w-2xl mx-auto text-pretty ${darkMode ? "text-white/80" : "text-gray"}`}>
-                  Connect with qualified doctors and manage your healthcare journey with ease. Experience the future of healthcare management.
+                <p
+                  className={`text-lg lg:text-xl max-w-2xl mx-auto text-pretty ${
+                    darkMode ? "text-white/80" : "text-gray"
+                  }`}
+                >
+                  Connect with qualified doctors and manage your healthcare
+                  journey with ease. Experience the future of healthcare
+                  management.
                 </p>
               </div>
 
-              {/* Search Widget for Patients */}
-              {loggedIn && role === "patient" && (
-                <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm dark:bg-white/95">
+              {/* Search Widget */}
+              {loggedStatus && role==='patient' && (
+              <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm dark:bg-white/95">
                   <div className="p-6 space-y-4">
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray">🔍</span>
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray">
+                        🔍
+                      </span>
                       <Link to="/search">
                         <input
                           type="text"
@@ -113,13 +148,14 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
                   </div>
                 </div>
               )}
+              
 
-              {/* Join Buttons for non-logged users */}
-              {!loggedIn && (
+              {/* Join Buttons */}
+              {!loggedStatus && (
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
                   <Link
                     to="/login"
-                    className="w-full sm:w-auto bg-[#E29578] hover:bg-[#E29578]/40 text-white px-8 py-2 rounded-md border-2 border-[#E29578] transition-colors"
+                    className=" w-full sm:w-auto bg-[#E29578] hover:bg-[#E29578]/40 text-white px-8 py-2 rounded-md border-2 border-[#E29578] transition-colors"
                   >
                     Join as Patient
                   </Link>
@@ -140,22 +176,39 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
         </section>
 
         {/* Stats Section */}
-        <section id="stats" className={`py-12 lg:py-16 ${darkMode ? "bg-teal-200/20" : "bg-white/50"}`}>
+        <section
+          id="stats"
+          className={`py-12 lg:py-16 ${
+            darkMode ? "bg-teal-200/20" : "bg-white/50"
+          }`}
+        >
           <StatSection darkMode={darkMode} />
         </section>
 
         {/* Features Section */}
-        <section id="features" className={`py-16 lg:py-24 ${darkMode ? "bg-teal" : "bg-color"}`}>
+        <section
+          id="features"
+          className={`py-16 lg:py-24 ${darkMode ? "bg-teal" : "bg-color"}`}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-16">
               <span className="inline-block bg-light-teal/20 text-teal hover:bg-light-teal/30 dark:bg-light-teal/20 dark:text-light-teal dark:hover:bg-light-teal/30 px-3 py-1 rounded-full text-sm font-medium">
                 Why Choose Us
               </span>
-              <h2 className={`text-3xl lg:text-4xl font-bold ${darkMode ? "text-white" : "text-gray"}`}>
+              <h2
+                className={`text-3xl lg:text-4xl font-bold ${
+                  darkMode ? "text-white" : "text-gray"
+                }`}
+              >
                 Why choose HealthConnect?
               </h2>
-              <p className={`text-lg max-w-2xl mx-auto ${darkMode ? "text-white/80" : "text-gray"}`}>
-                Experience healthcare management like never before with our comprehensive platform
+              <p
+                className={`text-lg max-w-2xl mx-auto ${
+                  darkMode ? "text-white/80" : "text-gray"
+                }`}
+              >
+                Experience healthcare management like never before with our
+                comprehensive platform
               </p>
             </div>
 
@@ -171,7 +224,9 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
                         <span className="text-2xl">{feature.icon}</span>
                       </div>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray dark:text-white">{feature.title}</h3>
+                    <h3 className="text-xl font-semibold text-gray dark:text-white">
+                      {feature.title}
+                    </h3>
                     <p className="text-gray/80 ">{feature.description}</p>
                   </div>
                 </div>
@@ -181,25 +236,35 @@ export default function HealthConnectLanding({ showDropList, setShowDropList }) 
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className={`py-16 lg:py-24 ${darkMode ? "bg-gray/20" : "bg-white/50"}`}>
+        <section
+          id="testimonials"
+          className={`py-16 lg:py-24 ${
+            darkMode ? "bg-gray/20" : "bg-white/50"
+          }`}
+        >
           <TestimonialSection darkMode={darkMode} />
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className={`py-16 lg:py-24 ${darkMode ? "bg-teal" : "bg-color"}`}>
-          <FaqSection setOpenFaq={setOpenFaq} openFaq={openFaq} darkMode={darkMode} />
+        <section
+          id="faq"
+          className={`py-16 lg:py-24 ${darkMode ? "bg-teal" : "bg-color"}`}
+        >
+          <FaqSection
+            setOpenFaq={setOpenFaq}
+            openFaq={openFaq}
+            darkMode={darkMode}
+          />
         </section>
 
         {/* CTA Section */}
-        {!loggedIn && (
+        {!loggedStatus && (
           <section className="py-16 lg:py-24 bg-teal text-white">
             <CTASection />
           </section>
         )}
-
         <Footer darkMode={darkMode} />
       </div>
-
       <ScrollToTop />
     </>
   );

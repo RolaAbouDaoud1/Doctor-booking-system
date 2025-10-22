@@ -3,11 +3,8 @@ import Step1SelectDate from "../components/Step1SelectDate";
 import Step2Details from "../components/Step2Details";
 import Step3Summary from "../components/Step3Summary";
 import "./BookAppointment.css";
-import { useParams } from "react-router-dom";
 
 export default function BookAppointment() {
-  const { doctorId } = useParams();
-  const patientId = localStorage.getItem("patientId");
   const [step , setStep] = useState(1);
   const[selectedDate , setSelectedDate] = useState(null);
   const[selectedTime , setSelectedTime] = useState(null);

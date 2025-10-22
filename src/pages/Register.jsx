@@ -18,6 +18,7 @@ export default function Register({ showDropList, setShowDropList }) {
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+961");
   const [role, setRole] = useState("Patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -62,12 +63,7 @@ export default function Register({ showDropList, setShowDropList }) {
     services: [],
     specialties: [],
   });
- const [patientTotal, setPatientTotal] = useState({
-    username: name,
-    useremail: email,
-    userphone:  phone,
-    userallergies: patientData.allergies,
-  });
+// parent state `setPatientTotal` (if provided) will be updated after successful registration
 
 
 
@@ -84,6 +80,7 @@ export default function Register({ showDropList, setShowDropList }) {
     setName("");
     setFullName("");
     setPhone("");
+    setCountryCode("+961");
     setEmail("");
     setPassword("");
     setGender("Male");
@@ -339,8 +336,9 @@ export default function Register({ showDropList, setShowDropList }) {
       return;
     }
 
-    // Prepare request
-    const baseData = { name, role, fullName, phone, email, password, Gender };
+    // Prepare request - combine country code with phone number
+    const fullPhoneNumber = `${countryCode}${phone}`;
+    const baseData = { name, role, fullName, phone: fullPhoneNumber, email, password, Gender };
     const finalData =
       role === "Patient"
         ? { ...baseData, ...patientData }
@@ -391,7 +389,17 @@ export default function Register({ showDropList, setShowDropList }) {
 
       localStorage.setItem("role", role);
       localStorage.setItem("username", name);
-      localStorage.setItem("patientTotal", JSON.stringify(patientTotal));
+      // store an up-to-date snapshot of patient info instead of relying on possibly stale state
+      const patientTotalToStore = {
+        username: name,
+        useremail: email,
+        userphone: fullPhoneNumber,
+        userallergies: patientData?.allergies || [],
+      };
+      if (typeof setPatientTotal === "function") {
+        setPatientData(patientTotalToStore);
+      }
+      localStorage.setItem("patientTotal", JSON.stringify(patientTotalToStore));
 
 
       // Decode token
@@ -522,13 +530,40 @@ export default function Register({ showDropList, setShowDropList }) {
           {/* Phone */}
           <div className="form-group">
             <label>Phone Number</label>
-            <input
-              type="number"
-              placeholder="Enter your phone number"
-              className="input-field"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <div className="phone-input-wrapper">
+              <div className="country-code-selector">
+                <select 
+                  className="country-code-select"
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                >
+                  <option value="+961">+961 (Lebanon)</option>
+                  <option value="+1">+1 (USA/Canada)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+33">+33 (France)</option>
+                  <option value="+49">+49 (Germany)</option>
+                  <option value="+39">+39 (Italy)</option>
+                  <option value="+34">+34 (Spain)</option>
+                  <option value="+971">+971 (UAE)</option>
+                  <option value="+966">+966 (Saudi Arabia)</option>
+                  <option value="+20">+20 (Egypt)</option>
+                  <option value="+962">+962 (Jordan)</option>
+                  <option value="+963">+963 (Syria)</option>
+                  <option value="+964">+964 (Iraq)</option>
+                  <option value="+965">+965 (Kuwait)</option>
+                  <option value="+968">+968 (Oman)</option>
+                  <option value="+974">+974 (Qatar)</option>
+                  <option value="+973">+973 (Bahrain)</option>
+                </select>
+              </div>
+              <input
+                type="tel"
+                placeholder="Enter phone number"
+                className="input-field phone-number-input"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
             {phoneError && <p className="error">{phoneError}</p>}
           </div>
 

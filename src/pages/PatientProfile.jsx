@@ -6,7 +6,7 @@ import PatientCard from "../components/PatientCard";
 import PatientHistory from "../components/PatientHistory";
 import "./PatientProfile.css";
 
-export default function PatientProfile({patientTotal}) {
+export default function PatientProfile() {
   const { patientId } = useParams();
   const [patient, setPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -185,16 +185,16 @@ export default function PatientProfile({patientTotal}) {
           
           {!isEditing ? (
             <>
-              <h2 className="pp__patient-name">{patientTotal.username}</h2>
+              <h2 className="pp__patient-name">{patient.name}</h2>
               
               <div className="pp__info-group">
                 <div className="pp__info-row">
                   <Mail size={18} className="pp__info-icon" />
-                  <span className="pp__info-text">{patientTotal.useremail}</span>
+                  <span className="pp__info-text">{patient.email}</span>
                 </div>
                 <div className="pp__info-row">
                   <Phone size={18} className="pp__info-icon" />
-                  <span className="pp__info-text">{patientTotal.userphone}</span>
+                  <span className="pp__info-text">{patient.phone}</span>
                 </div>
                 <div className="pp__info-row">
                   <AlertCircle size={18} className="pp__info-icon" />
@@ -203,7 +203,7 @@ export default function PatientProfile({patientTotal}) {
                     {patient.allergies && patient.allergies.length > 0 ? (
                       <div className="pp__allergies-tags">
                         {patient.allergies.map((allergy, idx) => (
-                          <span key={idx} className="pp__allergy-tag">{patientTotal.userallergies}</span>
+                          <span key={idx} className="pp__allergy-tag">{allergy}</span>
                         ))}
                       </div>
                     ) : (

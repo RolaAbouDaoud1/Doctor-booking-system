@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBarLg from "../components/sections/NavBarLg";
 import "./design.css";
 import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+import * as jwtDecode from "jwt-decode"; // ✅ Vite-compatible import
 
 export default function LoginPage({ showDropList, setShowDropList }) {
   const navigate = useNavigate();
@@ -36,17 +36,14 @@ export default function LoginPage({ showDropList, setShowDropList }) {
       });
 
       const data = await res.json();
-      console.log("Response status:", res.status);
-      console.log("Response data:", data);
-
 
       if (res.ok) {
-        const decoded = jwtDecode(data.token);
+        const decoded = jwtDecode.default(data.token); 
         const userId = decoded.id || data.id || null;
         const nameFromToken = decoded.name || "User";
 
         // Save cookies and localStorage
-        Cookies.set("token", data.token, { expires:1, secure: true, sameSite: "Strict" });
+        Cookies.set("token", data.token, { secure: true, sameSite: "Strict" });
         Cookies.set("userEmail", email);
         Cookies.set("userRole", role);
 
