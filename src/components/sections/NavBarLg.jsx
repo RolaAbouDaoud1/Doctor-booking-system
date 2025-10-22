@@ -168,8 +168,7 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
   const [username, setUsername] = useState(localStorage.getItem("username"));
   const [patientId, setPatientId] = useState(localStorage.getItem("patientId"));
   const [doctorId, setDoctorId] = useState(localStorage.getItem("doctorId"));
-
-  const navPatientLoggedIn = [
+ const navPatientLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/patient-dashboard" },
     { text: "Search For Doctors", icon: Activity, link: "/search" },
@@ -179,7 +178,6 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
   const navDoctorLoggedIn = [
     { text: "Home", icon: House, link: "/" },
     { text: "My Dashboard", icon: LayoutDashboard, link: "/doctor-dashboard" },
-    { text: "View Appointments", icon: Activity, link: "/doctor-dashboard" },
     { text: "View Appointments", icon: Activity, link: "/patient-dashboard" },
     { text: username, icon: User, link: `/doctor/${doctorId}/profile` },
   ];
@@ -189,7 +187,6 @@ export default function NavBarLg({ darkMode, setDarkMode, showDropList, setShowD
     { text: "Search For Doctors", icon: Activity, link: "/search" },
     { text: "Sign In", icon: LogIn, link: "/login" },
   ];
-
   const [navArray, setNavArray] = useState(navNotLoggedIn);
 
   // Update nav whenever login status or role changes
