@@ -70,7 +70,6 @@ export default function DoctorSearchPage({
       return;
     }
     // use a specific route — change to your booking route
-    const Docname=localStorage.set("Docname");
     navigate(`/book/${doctor.id}`);
   };
   const handleKeyDown = async (event) => {
