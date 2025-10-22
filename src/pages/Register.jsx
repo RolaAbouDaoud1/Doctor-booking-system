@@ -1,47 +1,31 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import NavBarLg from "../components/sections/NavBarLg";
 import { jwtDecode } from "jwt-decode";
 import "./design.css";
 
 export default function Register({ showDropList, setShowDropList }) {
-  
+    const navigate = useNavigate();
   const baseUrl = "http://localhost:8080";
-
-  // Clear previous user data on component mount
-  // useEffect(() => {
-  //   // Clear cookies
-  //   Cookies.remove("token");
-  //   Cookies.remove("userEmail");
-  //   Cookies.remove("role");
-
-  //   // Clear localStorage
-  //   localStorage.removeItem("role");
-  //   localStorage.removeItem("username");
-  //   localStorage.removeItem("patientId");
-  //   localStorage.removeItem("doctorId");
-  //   localStorage.removeItem("specialties");
-  //   localStorage.removeItem("loggedIn");
-
-  //   console.log("Previous user data cleared");
-  // }, []);
 
   const [token, setToken] = useState("");
 
-  // Basic info
   // eslint-disable-next-line no-unused-vars
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+961");
   const [role, setRole] = useState("Patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [Gender, setGender] = useState("Male");
+
+
 
   // Error states
   const [nameError, setNameError] = useState("");
@@ -79,6 +63,9 @@ export default function Register({ showDropList, setShowDropList }) {
     services: [],
     specialties: [],
   });
+// parent state `setPatientTotal` (if provided) will be updated after successful registration
+
+
 
   const [doctorErrors, setDoctorErrors] = useState({});
 
@@ -93,6 +80,7 @@ export default function Register({ showDropList, setShowDropList }) {
     setName("");
     setFullName("");
     setPhone("");
+    setCountryCode("+961");
     setEmail("");
     setPassword("");
     setGender("Male");
@@ -348,8 +336,9 @@ export default function Register({ showDropList, setShowDropList }) {
       return;
     }
 
-    // Prepare request
-    const baseData = { name, role, fullName, phone, email, password, Gender };
+    // Prepare request - combine country code with phone number
+    const fullPhoneNumber = `${countryCode}${phone}`;
+    const baseData = { name, role, fullName, phone: fullPhoneNumber, email, password, Gender };
     const finalData =
       role === "Patient"
         ? { ...baseData, ...patientData }
@@ -398,8 +387,20 @@ export default function Register({ showDropList, setShowDropList }) {
       Cookies.set("userEmail", email);
       Cookies.set("role", role);
 
-      localStorage.setItem("userRole", role);
+      localStorage.setItem("role", role);
       localStorage.setItem("username", name);
+      // store an up-to-date snapshot of patient info instead of relying on possibly stale state
+      const patientTotalToStore = {
+        username: name,
+        useremail: email,
+        userphone: fullPhoneNumber,
+        userallergies: patientData?.allergies || [],
+      };
+      if (typeof setPatientTotal === "function") {
+        setPatientData(patientTotalToStore);
+      }
+      localStorage.setItem("patientTotal", JSON.stringify(patientTotalToStore));
+
 
       // Decode token
       const decoded = jwtDecode(result.token);
@@ -407,12 +408,17 @@ export default function Register({ showDropList, setShowDropList }) {
 
       const namefromToken = decoded.name;
       const userId = decoded.id;
-
-      localStorage.setItem("doctorId", userId);
+      if(role==="patient"){
+        localStorage.setItem("patientId", userId);
+      }
+      else{
+        localStorage.setItem("doctorId",userId);
+      }
       console.log("name from token: ", namefromToken);
 
       resetAll();
       localStorage.setItem("loggedIn", "true");
+      navigate("/");
       // Use loggedIn variable to make eslint-disable necessary
       if (loggedIn) {
         console.log("Already logged in");
@@ -524,13 +530,40 @@ export default function Register({ showDropList, setShowDropList }) {
           {/* Phone */}
           <div className="form-group">
             <label>Phone Number</label>
-            <input
-              type="number"
-              placeholder="Enter your phone number"
-              className="input-field"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <div className="phone-input-wrapper">
+              <div className="country-code-selector">
+                <select 
+                  className="country-code-select"
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                >
+                  <option value="+961">+961 (Lebanon)</option>
+                  <option value="+1">+1 (USA/Canada)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+33">+33 (France)</option>
+                  <option value="+49">+49 (Germany)</option>
+                  <option value="+39">+39 (Italy)</option>
+                  <option value="+34">+34 (Spain)</option>
+                  <option value="+971">+971 (UAE)</option>
+                  <option value="+966">+966 (Saudi Arabia)</option>
+                  <option value="+20">+20 (Egypt)</option>
+                  <option value="+962">+962 (Jordan)</option>
+                  <option value="+963">+963 (Syria)</option>
+                  <option value="+964">+964 (Iraq)</option>
+                  <option value="+965">+965 (Kuwait)</option>
+                  <option value="+968">+968 (Oman)</option>
+                  <option value="+974">+974 (Qatar)</option>
+                  <option value="+973">+973 (Bahrain)</option>
+                </select>
+              </div>
+              <input
+                type="tel"
+                placeholder="Enter phone number"
+                className="input-field phone-number-input"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
             {phoneError && <p className="error">{phoneError}</p>}
           </div>
 
