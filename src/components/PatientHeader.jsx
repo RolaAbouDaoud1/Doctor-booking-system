@@ -1,4 +1,3 @@
-import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +6,7 @@ export default function PatientHeader() {
 
   return (
     <div className="profile-header">
-      <button className="back-button" onClick={() => navigate(-1)}>
+      <button className="back-button" onClick={() => navigate("/")}>
         <ArrowLeft size={20} />
       </button>
       <h1>Patient Profile</h1>

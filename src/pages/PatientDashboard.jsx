@@ -7,6 +7,8 @@ import NavBarLg from "../components/sections/NavBarLg";
 import "./PatientDashboard.css";
 import "./SharedDashboard.css";
 import "./WellnessModal.css";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const API_BASE = "http://localhost:8080/api";
 
@@ -200,6 +202,8 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
       (doc) => doc.type === "lab_result" && doc.status === "pending"
     ).length;
 
+
+
     return {
       upcomingAppointments: appointments.length,
       medicalRecords: medicalReports,
@@ -344,8 +348,11 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     month: "long",
     day: "numeric",
   });
+const token = Cookies.get("token");
+const decoded = jwtDecode(token);
+const namefromToken = decoded.name;
 
-  return (
+return (
     <>
       <NavBarLg setShowDropList={setShowDropList} showDropList={showDropList} />
       <div className="dashboard bg-color">
@@ -354,7 +361,7 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
             <h1 className="greeting">
               {greeting},{" "}
               <span className="patient-highlight">
-                {patientProfile?.fullName || "Ahmad"}!
+                {decoded.name|| "test"}!
               </span>
             </h1>
             <p className="date-display">📅{todayDate} </p>

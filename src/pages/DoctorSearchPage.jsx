@@ -198,15 +198,17 @@ export default function DoctorSearchPage({
             Oops, No Doctors Found
           </div>
         ) : null}
-        <div className="px-4 space-y-4">
-          {filteredDoctors.map((doctor) => (
-            <DoctorCard
-              key={doctor.id}
-              doctor={doctor}
-              onViewProfile={handleViewProfile}
-              onBookNow={handleBookNow}
-            />
-          ))}
+        <div className="px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            {filteredDoctors.map((doctor) => (
+              <DoctorCard
+                key={doctor.id}
+                doctor={doctor}
+                onViewProfile={handleViewProfile}
+                onBookNow={handleBookNow}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="h-8"></div>

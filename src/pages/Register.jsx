@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Link, useNavigate} from "react-router-dom";
 import RegisterDoctor from "../components/register-doctor";
 import NavBarLg from "../components/sections/NavBarLg";
-import { jwtDecode } from "jwt-decode";
 import "./design.css";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function Register({ showDropList, setShowDropList }) {
     const navigate = useNavigate();
@@ -385,7 +386,8 @@ export default function Register({ showDropList, setShowDropList }) {
       }
 
       Cookies.set("userEmail", email);
-      Cookies.set("role", role);
+      // use the same cookie key other parts of the app expect
+      Cookies.set("userRole", role);
 
       localStorage.setItem("role", role);
       localStorage.setItem("username", name);
@@ -396,11 +398,9 @@ export default function Register({ showDropList, setShowDropList }) {
         userphone: fullPhoneNumber,
         userallergies: patientData?.allergies || [],
       };
-      if (typeof setPatientTotal === "function") {
-        setPatientData(patientTotalToStore);
-      }
+      // if you have a parent callback named `setPatientTotal` pass it here
+      // (no-op if not provided)
       localStorage.setItem("patientTotal", JSON.stringify(patientTotalToStore));
-
 
       // Decode token
       const decoded = jwtDecode(result.token);
@@ -408,7 +408,7 @@ export default function Register({ showDropList, setShowDropList }) {
 
       const namefromToken = decoded.name;
       const userId = decoded.id;
-      if(role==="patient"){
+      if(role.toLowerCase()==="patient"){
         localStorage.setItem("patientId", userId);
       }
       else{

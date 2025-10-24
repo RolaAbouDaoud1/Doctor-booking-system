@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { Sparkles, Trophy, Heart } from 'lucide-react';
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const PatientQuickActions = () => {
   const [showWellnessHub, setShowWellnessHub] = useState(false);
@@ -213,7 +215,8 @@ const PatientQuickActions = () => {
     console.log('Navigate to:', path);
     window.location.href = path;
   };
-
+const token = Cookies.get("token");
+const decoded = jwtDecode(token);
   const WellnessHubModal = () => {
     const completedCount = completedToday.length;
     const progress = (completedCount / 6) * 100;
@@ -378,7 +381,7 @@ const PatientQuickActions = () => {
             </div>
           </button>
 
-          <button className="btn mint" onClick={() => handleNavigation("/patient-profile")}>
+          <button className="btn mint" onClick={() => handleNavigation(`/patient/${decoded.id}/profile`)}>
             <span className="btn-icon">👤</span>
             My Profile
           </button>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import DoctorDashboard from "./pages/DoctorDashboard";
@@ -15,15 +15,26 @@ import ForgotPassword from "./components/forgot-pass";
 function App() {
   const [showDropList, setShowDropList] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [role, setRole] = useState("Doctor");
+  const [role, setRole] = useState(() => localStorage.getItem("role") || null);
   const patientId = localStorage.getItem("patientId");
   const doctorId = localStorage.getItem("doctorId");
-
-  localStorage.setItem("role", role);
-  
-  // Use the variables to avoid ESLint warnings
-  console.log("Patient ID:", patientId, "Doctor ID:", doctorId);
+  useEffect(() => {
+    if (role === null) {
+      localStorage.removeItem("role");
+    } else {
+      localStorage.setItem("role", role);
+    }
+  }, [role]);
+  useEffect(() => {
+    console.log(
+      "Patient ID:",
+      patientId,
+      "Doctor ID:",
+      doctorId,
+      "role:",
+      role
+    );
+  }, [patientId, doctorId, role]);
 
   return (
     <>
@@ -40,9 +51,9 @@ function App() {
               />
             }
           />
-          <Route 
-            path="/doctor/:doctorId/profile" 
-            element={<DoctorProfile doctorId={doctorId} />} 
+          <Route
+            path="/doctor/:doctorId/profile"
+            element={<DoctorProfile doctorId={doctorId} />}
           />
           <Route
             path="/patient/:patientId/profile"
@@ -104,9 +115,9 @@ function App() {
           />
           <Route path="forgot-pass" element={<ForgotPassword />} />
           {/* <Route path="/book" element={<BookAppointment />} /> */}
-          <Route 
-            path="/book/:doctorId" 
-            element={<BookAppointment patientId={patientId} />} 
+          <Route
+            path="/book/:doctorId"
+            element={<BookAppointment patientId={patientId} />}
           />
         </Routes>
       </Router>

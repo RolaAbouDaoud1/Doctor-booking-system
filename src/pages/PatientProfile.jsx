@@ -1,453 +1,301 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { ChevronLeft, Calendar, Pill, Clock, User, Mail, Phone, Edit2, Save, X, Plus, Trash2, AlertCircle, FileText } from "lucide-react";
+import Cookies from "js-cookie";
+import {
+  AlertCircle,
+  ChevronLeft,
+  Edit2,
+  FileText,
+  Mail
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import PatientHeader from "../components/PatientHeader";
-import PatientCard from "../components/PatientCard";
-import PatientHistory from "../components/PatientHistory";
+import NavBarLg from "../components/sections/NavBarLg";
 import "./PatientProfile.css";
 
 export default function PatientProfile() {
-  const { patientId } = useParams();
+  const { patientId: paramsPatientId } = useParams();
+  const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(null);
-  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
-  const [showCancelDialog, setShowCancelDialog] = useState(null);
 
-  const baseURL = "http://localhost:8080/api/users/patient";
+const handleLogout = () => {
+    Cookies.remove("token")
+    Cookies.remove("userEmail")
+    Cookies.remove("userRole")
+
+    localStorage.removeItem("token")
+    localStorage.removeItem("role")
+    localStorage.removeItem("username")
+    localStorage.removeItem("patientId")
+    localStorage.removeItem("doctorId")
+    localStorage.setItem("loggedIn", "false")
+
+    navigate("/login")
+  }
 
   useEffect(() => {
-    const fetchPatient = async () => {
+    const controller = new AbortController();
+    const pid = paramsPatientId || localStorage.getItem("patientId");
+
+    if (!pid) {
+      setError("No patient id found");
+      setPatient({
+        initials: "AM",
+        fullName: "Ahmad Mansour",
+        email: "ahmad.mansour@email.com",
+        phoneNumber: "+961 (11) 123-4567",
+        allergies: ["Penicillin", "Latex"],
+        medicalHistory: [],
+      });
+      setLoading(false);
+      return () => {};
+    }
+
+    (async () => {
       try {
-        const response = await fetch(`${baseURL}/${patientId}/profile`);
-        if (!response.ok) throw new Error("Network response was not ok");
+        setLoading(true);
+        setError(null);
+        const token = Cookies.get("token");
+        const res = await fetch(
+          `http://localhost:8080/api/users/patient/${pid}/profile`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            credentials: "include",
+            signal: controller.signal,
+          }
+        );
 
-        const data = await response.json();
-        setPatient({...data, allergies: data.allergies || []});
-        setFormData({...data, allergies: data.allergies || []});
-      } catch (err) {
-        console.error("Error fetching patient data:", err);
-        setError(err.message);
+        const text = await res.text().catch(() => "");
+        let data;
+        try {
+          data = text ? JSON.parse(text) : null;
+        } catch {
+          data = text;
+        }
 
-        const demoPatient = {
-          initials: "AM",
-          name: "Ahmad Mansour",
-          email: "ahmad.mansour@email.com",
-          phone: "+961 (11) 123-4567",
-          allergies: ["Penicillin", "Latex"]
+        if (!res.ok) {
+          throw new Error(data?.message || text || `Failed (${res.status})`);
+        }
+console.log(data)
+        // normalize: backend may return parent with .patient nested or patient directly
+        const parent = data || {};
+        const nested = parent.patient || parent.data || parent.result || parent || {};
+
+        const fullName = nested.fullName || nested.name || parent.fullName || parent.userName || "Unknown";
+        const initials = fullName
+          .split(" ")
+          .map((s) => s[0] || "")
+          .slice(0, 2)
+          .join("")
+          .toUpperCase() || "NA";
+
+        const normalized = {
+          id: parent.id || nested.id || nested._id || parent._id,
+          initials,
+          fullName,
+          email: parent.email || nested.email || "Not provided",
+          phoneNumber: parent.phoneNumber || nested.phoneNumber || nested.phone || "Not provided",
+          dateOfBirth: nested.dateOfBirth || parent.dateOfBirth || null,
+          insuranceNumber: nested.insuranceNumber || parent.insuranceNumber || null,
+          allergies: nested.allergies || parent.patient?.allergies || [],
+          medicalHistory: nested.medicalHistory || parent.medicalHistory || nested.history || parent.history || [],
+          raw: parent,
+          ...nested,
         };
 
-        const demoHistory = [
-          { 
-            id: 1, 
-            type: "Cardiology Consultation", 
-            doctor: "Dr. Layla Khoury", 
-            date: "2024-10-15", 
-            time: "2:30 PM", 
-            status: "Completed",
-            notes: "Patient shows improvement in cardiovascular health. Blood pressure normalized.",
-            medications: []
-          },
-          { 
-            id: 2, 
-            type: "Medication Prescription", 
-            doctor: "Dr. Layla Khoury", 
-            date: "2024-10-15", 
-            medications: [
-              { name: "Lisinopril", dosage: "10mg", instructions: "Take once daily with food" },
-              { name: "Aspirin", dosage: "81mg", instructions: "Take once daily in the morning" }
-            ],
-            status: "Active"
-          },
-          { 
-            id: 3, 
-            type: "Follow-up Appointment", 
-            doctor: "Dr. Layla Khoury", 
-            date: "2024-11-05", 
-            time: "10:00 AM", 
-            status: "Scheduled",
-            notes: "Routine follow-up to check medication effectiveness."
-          },
-          { 
-            id: 4, 
-            type: "Lab Results", 
-            doctor: "Dr. Sarah Ahmed", 
-            date: "2024-09-20", 
-            status: "Completed",
-            notes: "Blood work results show cholesterol levels within normal range. Continue current treatment."
-          }
-        ];
-
-        setPatient(demoPatient);
-        setFormData(demoPatient);
-        setHistory(demoHistory);
+        setPatient(normalized);
+      } catch (err) {
+        console.error("Fetch patient error:", err);
+        setError(String(err.message || err));
+        // in case failed!
+        setPatient({
+          initials: "AM",
+          fullName: "Ahmad Mansour",
+          email: "ahmad.mansour@email.com",
+          phoneNumber: "+961 (11) 123-4567",
+          allergies: ["Penicillin", "Latex"],
+          medicalHistory: [],
+        });
       } finally {
         setLoading(false);
       }
-    };
+    })();
 
-    fetchPatient();
-  }, [patientId]);
+    return () => controller.abort();
+  }, [paramsPatientId]);
 
-  const handleCancel = (id) => {
-    setShowCancelDialog(id);
+  const handleEdit = () => {
+    if (!patient?.id) return;
+    navigate(`/patient/${patient.id}/edit`);
   };
 
-  const confirmCancel = () => {
-    setHistory((prev) => prev.map((item) => 
-      item.id === showCancelDialog ? { ...item, status: "Cancelled" } : item
-    ));
-    setShowCancelDialog(null);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleAllergyChange = (index, value) => {
-    const newAllergies = [...formData.allergies];
-    newAllergies[index] = value;
-    setFormData({ ...formData, allergies: newAllergies });
-  };
-
-  const addAllergy = () => {
-    setFormData({ ...formData, allergies: [...formData.allergies, ""] });
-  };
-
-  const removeAllergy = (index) => {
-    const newAllergies = formData.allergies.filter((_, i) => i !== index);
-    setFormData({ ...formData, allergies: newAllergies });
-  };
-
-  const handleSave = () => {
-    setPatient(formData);
-    setIsEditing(false);
-  };
-
-  const searchMedication = (medName) => {
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(medName + " medication")}`, '_blank');
-  };
-
-  const getDateStatus = (dateStr) => {
-    const appointmentDate = new Date(dateStr);
-    const now = new Date();
-    const diffTime = appointmentDate - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) {
-      return { text: `${Math.abs(diffDays)} days ago`, color: "#6b7280" };
-    } else if (diffDays === 0) {
-      return { text: "Today", color: "#059669" };
-    } else if (diffDays === 1) {
-      return { text: "Tomorrow", color: "#dc2626" };
-    } else {
-      return { text: `In ${diffDays} days`, color: "#2563eb" };
-    }
-  };
-
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
-  if (loading) {
+  if (loading)
     return (
-      <div className="pp__loading-container">
-        <div className="pp__spinner"></div>
-        <p className="pp__loading-text">Loading patient data...</p>
+      <div className="pp-loading">
+        <div className="pp-spinner" />
+        <p>Loading patient profile…</p>
       </div>
     );
-  }
 
   return (
-    <div className="pp__page-wrapper">
+    <>
+    <NavBarLg/>
+    <div className="patient-page min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-4 md:p-8">
       <PatientHeader />
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+          <div className="bg-gradient-to-r from-teal-600 to-cyan-600 h-28" />
+          <div className="px-6 md:px-10 pb-8">
+            <div className="flex flex-col md:flex-row md:items-end gap-6 -mt-16 md:-mt-18">
+              <div
+                className="w-28 h-28 md:w-36 md:h-36 rounded-2xl flex items-center justify-center text-white text-3xl md:text-4xl font-bold shadow-xl border-4 border-white"
+                style={{ backgroundColor: "#0f766e" }}
+              >
+                {patient.initials}
+              </div>
 
-      {error && (
-        <div className="pp__error-message">
-          <AlertCircle size={20} />
-          <p>⚠️ Failed to fetch patient data, showing demo info.</p>
-        </div>
-      )}
+              <div className="flex-1 md:mb-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 pb-3">{patient.fullName}</h1>
+                <div className="flex items-center gap-4 text-gray-600">
+                  <div className="text-sm">
+                    <span className="font-medium">DOB:</span>{" "}
+                    <span>{patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : "Not set"}</span>
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-medium">Insurance:</span>{" "}
+                    <span>{patient.insuranceNumber || "—"}</span>
+                  </div>
+                </div>
+              </div>
 
-      <div className="pp__content-grid">
-        <div className="pp__profile-card-container">
-          <div className="pp__avatar-circle">
-            {patient.initials}
+              <div className="ml-auto flex gap-3 md:mb-4 ">
+                <button
+                  onClick={() => navigate(-1)}
+                  className="px-5 py-2.5 rounded-lg border-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                >
+                  <ChevronLeft className="inline mr-2" size={16} />
+                  Back
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-teal-600 to-cyan-600 text-white"
+                >
+                  <Edit2 className="inline mr-2" size={16} />
+                  Edit Profile
+                </button>
+              </div>
+            </div>
           </div>
-          
-          {!isEditing ? (
-            <>
-              <h2 className="pp__patient-name">{patient.name}</h2>
-              
-              <div className="pp__info-group">
-                <div className="pp__info-row">
-                  <Mail size={18} className="pp__info-icon" />
-                  <span className="pp__info-text">{patient.email}</span>
-                </div>
-                <div className="pp__info-row">
-                  <Phone size={18} className="pp__info-icon" />
-                  <span className="pp__info-text">{patient.phone}</span>
-                </div>
-                <div className="pp__info-row">
-                  <AlertCircle size={18} className="pp__info-icon" />
-                  <div className="pp__allergies-container">
-                    <span className="pp__info-label">Allergies: </span>
-                    {patient.allergies && patient.allergies.length > 0 ? (
-                      <div className="pp__allergies-tags">
-                        {patient.allergies.map((allergy, idx) => (
-                          <span key={idx} className="pp__allergy-tag">{allergy}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="pp__no-allergies">None reported</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <button className="pp__edit-profile-btn" onClick={() => setIsEditing(true)}>
-                <Edit2 size={16} />
-                Edit Profile
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="pp__form-group">
-                <label className="pp__form-label">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="pp__form-input"
-                />
-              </div>
-
-              <div className="pp__form-group">
-                <label className="pp__form-label">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="pp__form-input"
-                />
-              </div>
-
-              <div className="pp__form-group">
-                <label className="pp__form-label">Phone</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="pp__form-input"
-                />
-              </div>
-
-              <div className="pp__form-group">
-                <label className="pp__form-label">Allergies</label>
-                {formData.allergies && formData.allergies.map((allergy, idx) => (
-                  <div key={idx} className="pp__allergy-input-row">
-                    <input
-                      type="text"
-                      value={allergy}
-                      onChange={(e) => handleAllergyChange(idx, e.target.value)}
-                      className="pp__form-input pp__allergy-input"
-                      placeholder="Enter allergy"
-                    />
-                    <button 
-                      onClick={() => removeAllergy(idx)}
-                      className="pp__remove-allergy-btn"
-                      type="button"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
-                <button onClick={addAllergy} className="pp__add-allergy-btn" type="button">
-                  <Plus size={16} />
-                  Add Allergy
-                </button>
-              </div>
-
-              <div className="pp__edit-actions">
-                <button className="pp__save-profile-btn" onClick={handleSave}>
-                  <Save size={16} />
-                  Save Changes
-                </button>
-                <button 
-                  className="pp__cancel-edit-btn" 
-                  onClick={() => {
-                    setFormData({...patient, allergies: patient.allergies ? [...patient.allergies] : []});
-                    setIsEditing(false);
-                  }}
-                >
-                  <X size={16} />
-                  Cancel
-                </button>
-              </div>
-            </>
-          )}
         </div>
 
-        <div className="pp__history-section">
-          <h2 className="pp__section-heading">Medical History</h2>
-          
-          <div className="pp__history-grid">
-            <div className="pp__history-list">
-              {history.map((item) => (
-                <div 
-                  key={item.id} 
-                  className={`pp__history-item ${selectedHistoryItem?.id === item.id ? 'pp__history-item--active' : ''}`}
-                  onClick={() => setSelectedHistoryItem(item)}
-                >
-                  <div className="pp__history-icon-wrapper">
-                    {item.type.includes("Consultation") || item.type.includes("Appointment") ? (
-                      <Calendar size={20} className="pp__history-icon" />
-                    ) : item.type.includes("Medication") ? (
-                      <Pill size={20} className="pp__history-icon" />
-                    ) : (
-                      <FileText size={20} className="pp__history-icon" />
-                    )}
-                  </div>
-
-                  <div className="pp__history-content">
-                    <h3 className="pp__history-title">{item.type}</h3>
-                    <p className="pp__history-doctor">{item.doctor}</p>
-                    
-                    <div className="pp__history-meta">
-                      <span className="pp__history-date">{formatDate(item.date)}</span>
-                      {item.time && <span className="pp__history-time">{item.time}</span>}
-                    </div>
-
-                    <div className="pp__status-row">
-                      <span className={`pp__status-badge pp__status-badge--${item.status.toLowerCase()}`}>
-                        {item.status}
-                      </span>
-                      
-                      {item.status === "Scheduled" && (
-                        <button 
-                          className="pp__cancel-appointment-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCancel(item.id);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      )}
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <aside className="lg:col-span-1 space-y-6">
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Mail className="w-5 h-5 text-teal-600" />
+                Contact
+              </h3>
+              <div className="space-y-3 text-gray-700">
+                <div>
+                  <div className="text-xs text-gray-500">Email</div>
+                  <div className="break-all">{patient.email || "Not provided"}</div>
                 </div>
-              ))}
+                <div>
+                  <div className="text-xs text-gray-500">Phone</div>
+                  <div>{patient.phoneNumber || "Not provided"}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Insurance #</div>
+                  <div>{patient.insuranceNumber || "Not provided"}</div>
+                </div>
+              </div>
             </div>
 
-            {selectedHistoryItem && (
-              <div className="pp__details-panel">
-                <div className="pp__details-header">
-                  <h3 className="pp__details-heading">{selectedHistoryItem.type}</h3>
-                  <button 
-                    className="pp__close-details-btn"
-                    onClick={() => setSelectedHistoryItem(null)}
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="pp__details-body">
-                  <div className="pp__detail-row">
-                    <User size={18} className="pp__detail-icon" />
-                    <div>
-                      <p className="pp__detail-label">Doctor</p>
-                      <p className="pp__detail-value">{selectedHistoryItem.doctor}</p>
-                    </div>
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-teal-600" />
+                Allergies
+              </h3>
+              <div>
+                {patient.allergies && patient.allergies.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {patient.allergies.map((a, i) => (
+                      <span key={i} className="px-3 py-1 rounded-full bg-yellow-50 text-yellow-800 text-sm">
+                        {a}
+                      </span>
+                    ))}
                   </div>
+                ) : (
+                  <div className="text-gray-500">None reported</div>
+                )}
+              </div>
+            </div>
+          </aside>
 
-                  <div className="pp__detail-row">
-                    <Calendar size={18} className="pp__detail-icon" />
-                    <div>
-                      <p className="pp__detail-label">Date</p>
-                      <p className="pp__detail-value">
-                        {formatDate(selectedHistoryItem.date)}
-                        {selectedHistoryItem.date && (
-                          <span 
-                            className="pp__date-status-badge"
-                            style={{ backgroundColor: getDateStatus(selectedHistoryItem.date).color }}
-                          >
-                            {getDateStatus(selectedHistoryItem.date).text}
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
+          <main className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-xl shadow-md p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <FileText className="w-6 h-6 text-teal-600" />
+                Medical History
+              </h2>
 
-                  {selectedHistoryItem.time && (
-                    <div className="pp__detail-row">
-                      <Clock size={18} className="pp__detail-icon" />
-                      <div>
-                        <p className="pp__detail-label">Time</p>
-                        <p className="pp__detail-value">{selectedHistoryItem.time}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedHistoryItem.notes && (
-                    <div className="pp__notes-section">
-                      <p className="pp__detail-label">Notes</p>
-                      <p className="pp__notes-text">{selectedHistoryItem.notes}</p>
-                    </div>
-                  )}
-
-                  {selectedHistoryItem.medications && selectedHistoryItem.medications.length > 0 && (
-                    <div className="pp__medications-section">
-                      <p className="pp__detail-label">Medications</p>
-                      {selectedHistoryItem.medications.map((med, idx) => (
-                        <div key={idx} className="pp__medication-card">
-                          <button 
-                            className="pp__medication-name-btn"
-                            onClick={() => searchMedication(med.name)}
-                          >
-                            {med.name} <span className="pp__medication-dosage">{med.dosage}</span>
-                          </button>
-                          <p className="pp__medication-instructions">{med.instructions}</p>
+              {patient.medicalHistory && patient.medicalHistory.length ? (
+                <div className="space-y-4">
+                  {patient.medicalHistory.map((h, idx) => (
+                    <div key={idx} className="p-4 rounded-lg border border-gray-100">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="text-sm text-gray-600">{h.type || "Event"}</div>
+                          <div className="text-base font-medium text-gray-900">{h.title || h.note || "Details"}</div>
                         </div>
-                      ))}
+                        <div className="text-sm text-gray-500">{h.date ? new Date(h.date).toLocaleDateString() : ""}</div>
+                      </div>
+                      {h.notes && <p className="mt-2 text-gray-700">{h.notes}</p>}
                     </div>
-                  )}
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-600">No medical history recorded.</div>
+              )}
+            </div>
+
+            <div className="bg-gradient-to-br from-teal-600 to-cyan-600 rounded-xl shadow-md p-8 text-white">
+              <h3 className="text-xl font-bold mb-4">Overview</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{patient.medicalHistory?.length ?? 0}</div>
+                  <div className="text-teal-100">Records</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{patient.allergies?.length ?? 0}</div>
+                  <div className="text-teal-100">Allergies</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{patient.dateOfBirth ? new Date(patient.dateOfBirth).getFullYear() : "—"}</div>
+                  <div className="text-teal-100">Birth Year</div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          </main>
         </div>
       </div>
-
-      {showCancelDialog && (
-        <div className="pp__modal-overlay" onClick={() => setShowCancelDialog(null)}>
-          <div className="pp__modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="pp__modal-title">Cancel Appointment?</h3>
-            <p className="pp__modal-text">
-              Are you sure you want to cancel this appointment? This action cannot be undone.
-            </p>
-            <div className="pp__modal-actions">
-              <button className="pp__modal-confirm-btn" onClick={confirmCancel}>
-                Yes, Cancel
-              </button>
-              <button className="pp__modal-cancel-btn" onClick={() => setShowCancelDialog(null)}>
-                No, Keep It
-              </button>
-            </div>
+       <div className="max-w-7xl mx-auto px-4 py-6 md:px-8 md:py-8">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 shadow"
+            >
+              Logout
+            </button>
           </div>
         </div>
-      )}
-    </div>
+    </div></>
   );
 }
