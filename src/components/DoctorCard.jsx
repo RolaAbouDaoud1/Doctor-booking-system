@@ -1,4 +1,5 @@
 import { Clock, MapPin, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
   return (
@@ -62,25 +63,27 @@ export default function DoctorCard({ doctor, onViewProfile, onBookNow }) {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => onViewProfile && onViewProfile(doctor)}
-              className="flex-1 py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-50 bg-transparent text-gray-700 transition-colors"
-            >
-              View Profile
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                if (typeof onBookNow === "function") onBookNow(doctor);
-              }}
-              className="flex-1 py-2 px-4 rounded-lg text-white hover:opacity-90 transition-colors"
-              style={{ backgroundColor: "#006d77" }}
-            >
-              Book Now
-            </button>
-          </div>
+          <Link to={`/book/${doctor.id}`}>
+            <div className="flex gap-3">
+              <button
+                onClick={() => onViewProfile && onViewProfile(doctor)}
+                className="flex-1 py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-50 bg-transparent text-gray-700 transition-colors"
+              >
+                View Profile
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (typeof onBookNow === "function") onBookNow(doctor);
+                }}
+                className="flex-1 py-2 px-4 rounded-lg text-white hover:opacity-90 transition-colors"
+                style={{ backgroundColor: "#006d77" }}
+              >
+                Book Now
+              </button>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
