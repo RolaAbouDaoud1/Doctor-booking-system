@@ -5,10 +5,7 @@ import Step3Summary from "../components/Step3Summary";
 import "./BookAppointment.css";
 
 export default function BookAppointment() {
-  const [step , setStep] = useState(1);
-  const[selectedDate , setSelectedDate] = useState(null);
-  const[selectedTime , setSelectedTime] = useState(null);
-  const role= localStorage.getItem("userRole");
+  const [step, setStep] = useState(1);
   const [appointment, setAppointment] = useState({
     date: "",
     time: "",
@@ -27,8 +24,6 @@ export default function BookAppointment() {
           appointment={appointment}
           setAppointment={setAppointment}
           nextStep={nextStep}
-          prevStep={prevStep}
-
         />
       )}
       {step === 2 && (
@@ -37,18 +32,14 @@ export default function BookAppointment() {
           setAppointment={setAppointment}
           nextStep={nextStep}
           prevStep={prevStep}
-          
-          
         />
       )}
       {step === 3 && (
         <Step3Summary
           appointment={appointment}
           prevStep={prevStep}
-          
         />
       )}
     </div>
   );
 }
-

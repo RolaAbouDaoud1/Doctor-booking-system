@@ -873,16 +873,79 @@ input[type="date"].input-field {
     border-radius: 6px;
 }
 
-.label-radio label:hover {
+.add-notes-btn {
+    background: none;
+    border: 2px dashed var(--bg-highlights);
+    border-radius: 10px;
     color: var(--mainbuts);
-    background: rgba(131, 197, 190, 0.1);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-input[type="radio"]{
-    accent-color: var(--mainbuts);
+.add-notes-btn:hover {
+    border-color: var(--mainbuts);
+    background: rgba(0, 109, 119, 0.05);
+    transform: translateY(-2px);
+}
+
+.notes-section {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    border: 2px solid var(--bg-highlights);
+}
+
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.close-notes-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 20px;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.close-notes-btn:hover {
+    color: var(--mainbuts);
+    background: rgba(0, 109, 119, 0.05);
+}
+
+.textarea-field {
+    width: 100%;
+    min-height: 120px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.textarea-field:focus {
+    outline: none;
+    border-color: var(--mainbuts);
+    box-shadow: 0 0 0 3px rgba(0, 109, 119, 0.1);
+}
+
+.textarea-field:hover {
+    border-color: var(--bg-highlights);
 }
 
 .password-wrapper{
