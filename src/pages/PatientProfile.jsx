@@ -23,7 +23,7 @@ export default function PatientProfile() {
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [_error, setError] = useState(null);
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [contactForm, setContactForm] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
