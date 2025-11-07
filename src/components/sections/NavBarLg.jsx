@@ -176,7 +176,7 @@ export default function NavBarLg({
         }
       `}</style>
       
-      <nav className="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-white/90 dark:bg backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
         <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}

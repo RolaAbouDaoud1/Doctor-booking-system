@@ -1,80 +1,78 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
-const Step1SelectDate = ({ appointment, setAppointment, nextStep, prevStep = () => window.history.back() }) => {
+const Step1SelectDate = ({ appointment, setAppointment, nextStep, doctorId, doctor }) => {
+  const [dates, setDates] = useState([]);
   const [times, setTimes] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // Generate next 7 days dynamically (value = YYYY-MM-DD, label = human readable)
   useEffect(() => {
-    const timeSlots = [
-      "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM",
-      "11:00 AM", "11:30 AM", "2:00 PM", "2:30 PM",
-      "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM",
-      "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM"
-    ];
-    setTimes(timeSlots);
+    const today = new Date();
+    const next7Days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const value = d.toISOString().split("T")[0]; // 2025-10-30
+      const label = d.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+      next7Days.push({ label, value });
+    }
+    setDates(next7Days);
   }, []);
 
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    const days = [];
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
-    }
-    return days;
-  };
-
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
-
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-  };
-
-  const handleDateSelect = (date) => {
-    if (date) {
-      setSelectedDate(date);
-      setAppointment({ ...appointment, date: date.toDateString() });
-    }
-  };
-
-  const handleTimeSelect = (time) => {
-    setAppointment({ ...appointment, time });
-  };
-
-  const handleNext = () => {
-    if (!appointment.date || !appointment.time) {
-      setModalMessage("Please select both date and time");
-      setShowModal(true);
+  const fetchAvailableTimes = async (dateValue) => {
+    if (!doctorId) {
+      console.warn("doctorId missing, cannot fetch availability");
+      setTimes([]);
       return;
     }
-    nextStep();
-  };
 
-  const days = getDaysInMonth(currentMonth);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    const controller = new AbortController();
+    try {
+      setLoading(true);
+      setTimes([]);
+      const token = Cookies.get("token");
+      const response = await fetch(
+        `http://localhost:8080/api/availability-slots/doctor/${doctorId}/all`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+          signal: controller.signal,
+        }
+      );
+      if (!response.ok) throw new Error("Failed to fetch slots");
+      const data = await response.json();
+      // expecting array of { date: "YYYY-MM-DD", times: [...] }
+      const selected = Array.isArray(data) ? data.find((item) => item.date === dateValue) : null;
+      setTimes(selected ? selected.times : []);
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Error fetching available times:", err);
+        alert("Failed to load available slots. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+
+    return () => controller.abort();
+  };
 
   return (
     <div className="appointment-container">
-      <div className="book-header">
-        <button className="back-btn" onClick={prevStep}>←</button>
-        <div style={{ width: "44px" }}></div>
+      <div className="book-card">
+        <button className="back-btn" onClick={() => window.history.back()}>
+          ←
+        </button>
+
         <h2 className="title">Book Appointment</h2>
         <div className="dots">
           <span className="dot active"></span>
@@ -83,125 +81,74 @@ const Step1SelectDate = ({ appointment, setAppointment, nextStep, prevStep = () 
         </div>
       </div>
 
-      <div className="appointment-content">
-        <div className="doctor-info-wrapper">
-        <div className="doctor-info-card">
-        <div className="doctor-card-inner">
-        <div className="avatar">LK</div>
+      <div className="doctor-info">
+        <div className="avatar">{(doctor?.initials) || "LK"}</div>
         <div className="doc-details">
-        <h3>{appointment.doctorName || "Dr. Layla Khoury"}</h3>
-        <small>Cardiology</small>
+          <h3>{doctor?.fullName || "Dr. Name"}</h3>
+          <small>{(doctor?.specialties?.[0]?.name) || doctor?.specialties?.[0] || "Specialty"}</small>
         </div>
-       <div className="doctor-divider"></div>
-     </div>
-  
-  <div className="price-box">
-    <div className="price">$150</div>
-    <div className="price-label">Consultation Fee</div>
-  </div>
-</div>
-          
-          <div className="cancellation-policy">
-            <div className="info-icon">i</div>
-            <span>Cancellation Policy</span>
-            <div className="policy-tooltip">
-              <h4>Cancellation Policy</h4>
-              <p>No charges for cancellations made 24 hours in advance. Late cancellations (less than 24 hours notice) are subject to a 50% consultation fee.</p>
-            </div>
-          </div>
-        </div>
+        <div className="price">{doctor?.price || "$150"}</div>
+      </div>
 
-        <div className="selection-area">
-          {!appointment.date ? (
-            <div className="section animate-in">
-              <h4 className="section-title">Select Date</h4>
-              
-              <div className="calendar-header">
-                <button className="calendar-nav-btn" onClick={handlePrevMonth}>‹</button>
-                <div className="calendar-month">
-                  {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                </div>
-                <button className="calendar-nav-btn" onClick={handleNextMonth}>›</button>
-              </div>
-
-              <div className="calendar-grid">
-                <div className="calendar-day-header">Sun</div>
-                <div className="calendar-day-header">Mon</div>
-                <div className="calendar-day-header">Tue</div>
-                <div className="calendar-day-header">Wed</div>
-                <div className="calendar-day-header">Thu</div>
-                <div className="calendar-day-header">Fri</div>
-                <div className="calendar-day-header">Sat</div>
-                
-                {days.map((date, index) => {
-                  if (!date) {
-                    return <div key={index} className="calendar-day empty"></div>;
-                  }
-                  const isPast = date < today;
-                  const isSelected = selectedDate && 
-                    date.toDateString() === selectedDate.toDateString();
-                  
-                  return (
-                    <button
-                      key={index}
-                      className={`calendar-day ${isPast ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`}
-                      onClick={() => !isPast && handleDateSelect(date)}
-                      disabled={isPast}
-                    >
-                      {date.getDate()}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            <div className="section animate-in">
-              <div className="section-header">
-                <h4 className="section-title">Select Time Slot</h4>
-                <button className="change-date-btn" onClick={() => {
-                  setAppointment({ ...appointment, date: "", time: "" });
-                  setSelectedDate(null);
-                }}>
-                  Change Date
-                </button>
-              </div>
-              
-              <div className="selected-date-display">
-                {appointment.date}
-              </div>
-              
-              <div className="time-grid">
-                {times.map((time, index) => (
-                  <button
-                    key={index}
-                    className={`time-btn ${appointment.time === time ? "active" : ""}`}
-                    onClick={() => handleTimeSelect(time)}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button className="next-btn" onClick={handleNext}>
-            Next
-          </button>
+      <div className="section">
+        <h4>Select Date</h4>
+        <div className="date-grid">
+          {dates.map((d) => (
+            <button
+              key={d.value}
+              className={appointment?.date === d.value ? "date-btn active" : "date-btn"}
+              onClick={() => {
+                setAppointment({ ...appointment, date: d.value, time: null });
+                fetchAvailableTimes(d.value); // fetch times for selected date
+              }}
+              type="button"
+            >
+              {d.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-icon error">!</div>
-            <h3 className="modal-title">Incomplete Selection</h3>
-            <p className="modal-message">{modalMessage}</p>
-            <button className="modal-btn" onClick={() => setShowModal(false)}>
-              OK
-            </button>
+      {/* show loader when fetching */}
+      {loading && (
+        <div className="section">
+          <p>Loading available times…</p>
+        </div>
+      )}
+
+      {/* show available times after selecting a date */}
+      {appointment?.date && !loading && (
+        <div className="section">
+          <h4>Available Times</h4>
+          <div className="time-grid">
+            {times.length ? (
+              times.map((t) => (
+                <button
+                  key={t}
+                  className={appointment?.time === t ? "time-btn active" : "time-btn"}
+                  onClick={() => setAppointment({ ...appointment, time: t })}
+                  type="button"
+                >
+                  {t}
+                </button>
+              ))
+            ) : (
+              <div className="text-gray-500">No slots available for this date</div>
+            )}
           </div>
         </div>
       )}
+
+      <button
+        className="next-btn"
+        onClick={() => {
+          if (appointment?.date && appointment?.time) nextStep();
+          else alert("Please select date and time");
+        }}
+        type="button"
+      >
+        Next
+      </button>
     </div>
   );
 };
