@@ -388,12 +388,14 @@ export default function Register({ showDropList, setShowDropList }) {
       Cookies.set("userEmail", email);
       // use the same cookie key other parts of the app expect
       Cookies.set("userRole", role);
-
       localStorage.setItem("role", role);
       localStorage.setItem("username", name);
+      localStorage.setItem("fullName", fullName); // ✅ Store fullName separately
+      
       // store an up-to-date snapshot of patient info instead of relying on possibly stale state
       const patientTotalToStore = {
         username: name,
+        fullName: fullName, // ✅ Add fullName to patientTotal
         useremail: email,
         userphone: fullPhoneNumber,
         userallergies: patientData?.allergies || [],
@@ -407,14 +409,26 @@ export default function Register({ showDropList, setShowDropList }) {
       console.log("Decoded token:", decoded);
 
       const namefromToken = decoded.name;
+      const fullNameFromToken = decoded.fullName || decoded.name || namefromToken; // ✅ Get fullName from token
       const userId = decoded.id;
+      
+      // ✅ Store fullName from token if available
+      if (fullNameFromToken && fullNameFromToken !== "User") {
+        localStorage.setItem("fullName", fullNameFromToken);
+      }
+      
       if(role.toLowerCase()==="patient"){
         localStorage.setItem("patientId", userId);
       }
       else{
         localStorage.setItem("doctorId",userId);
+        // ✅ Store fullName for doctor too
+        if (fullNameFromToken && fullNameFromToken !== "User") {
+          localStorage.setItem("fullName", fullNameFromToken);
+        }
       }
       console.log("name from token: ", namefromToken);
+      console.log("fullName from token: ", fullNameFromToken);
 
       resetAll();
       localStorage.setItem("loggedIn", "true");

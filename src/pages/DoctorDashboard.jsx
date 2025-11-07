@@ -4,246 +4,150 @@ import DoctorAppointmentsManager from "../components/DoctorAppointmentsManager";
 import DoctorOverviewStats from "../components/DoctorOverviewStats";
 import DoctorQuickActions from "../components/DoctorQuickActions";
 import Modal from "../components/Modal";
-import RescheduleModal from "../Components/ReschedualModal";
+import RescheduleModal from "../components/ReschedualModal";
 import NavBarLg from "../components/sections/NavBarLg";
+import {
+  updateLocalAppointment,
+  getStatusMeta,
+  readLocalAppointments,
+  normalizeLocalAppointment,
+} from "../utils/offlineAppointments";
 import "./DoctorDashboard.css";
 import "./SharedDashboard.css";
 import "./WellnessModal.css";
 
-const API_BASE = "http://localhost:8080/api";
+const INITIAL_MODAL_STATE = {
+  visible: false,
+  action: "",
+  appointmentId: null,
+  text: "",
+};
+
+const INITIAL_RESCHEDULE_STATE = {
+  visible: false,
+  appointmentId: null,
+  appointmentName: "",
+  newDate: "",
+  newTime: "",
+};
+
+const toIsoString = (date, time) => {
+  if (!date || !time) return null;
+  const trimmed = String(time).trim();
+
+  const ampmMatch = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  let hours;
+  let minutes;
+
+  if (ampmMatch) {
+    hours = parseInt(ampmMatch[1], 10);
+    minutes = parseInt(ampmMatch[2], 10);
+    const period = ampmMatch[3].toUpperCase();
+    if (period === "PM" && hours < 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+  } else {
+    const hhmmMatch = trimmed.match(/^(\d{1,2}):(\d{2})$/);
+    if (hhmmMatch) {
+      hours = parseInt(hhmmMatch[1], 10);
+      minutes = parseInt(hhmmMatch[2], 10);
+    }
+  }
+
+  if (hours === undefined || minutes === undefined) {
+    const fallback = new Date(`${date} ${time}`);
+    return Number.isNaN(fallback.getTime()) ? null : fallback.toISOString();
+  }
+
+  const constructed = new Date(`${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`);
+  return Number.isNaN(constructed.getTime()) ? null : constructed.toISOString();
+};
 
 const DoctorDashboard = ({ showDropList, setShowDropList }) => {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
-  const [doctorProfile, setDoctorProfile] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [modal, setModal] = useState({
-    visible: false,
-    action: "",
-    appointmentId: null,
-    text: "",
-  });
-  const [rescheduleModal, setRescheduleModal] = useState({
-    visible: false,
-    appointmentId: null,
-    appointmentName: "",
-    newDate: "",
-    newTime: "",
-  });
+  const [modal, setModal] = useState(INITIAL_MODAL_STATE);
+  const [rescheduleModal, setRescheduleModal] = useState(INITIAL_RESCHEDULE_STATE);
   const [showAppointments, setShowAppointments] = useState(false);
-  const username=localStorage.getItem("username");
-  const specialties = JSON.parse(localStorage.getItem("specialties")) || [];
-  const patientId=localStorage.getItem("patientId");
-  const doctorId=localStorage.getItem("doctorId");
 
-
-  // Get auth headers with token
-  const getAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem("authToken");
-    return {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    };
+  const doctorId = useMemo(() => {
+    const stored = localStorage.getItem("doctorId");
+    return stored ? String(stored) : "1";
   }, []);
 
-  // REAL API CALLS FROM YOUR PDF DOCUMENTATION
+  // ✅ Get doctor name from multiple sources with priority
+  const doctorName = useMemo(() => {
+    // Priority 1: Check localStorage for fullName
+    const storedFullName = localStorage.getItem("fullName");
+    if (storedFullName && storedFullName !== "User" && storedFullName !== "Doctor") {
+      return storedFullName;
+    }
+    
+    // Priority 2: Check username in localStorage
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername && storedUsername !== "User" && storedUsername !== "Doctor") {
+      return storedUsername;
+    }
+    
+    // Fallback
+    return "Doctor";
+  }, []);
 
-  // GET /api/appointments/doctor/{doctorId}
-  const fetchDoctorAppointments = useCallback(
-    async (doctorId) => {
-      try {
-        const response = await fetch(
-          `${API_BASE}/appointments/doctor/${doctorId}`,
-          {
-            headers: getAuthHeaders(),
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch appointments");
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
+  const specialties = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("specialties") || "[]");
+    } catch (err) {
+      console.warn("Failed to parse specialties", err);
         return [];
       }
-    },
-    [getAuthHeaders]
-  );
+  }, []);
 
-  // GET /api/users/doctors/{id} - Doctor profile
-  const fetchDoctorProfile = useCallback(
-    async (doctorId) => {
-      try {
-        const response = await fetch(`${API_BASE}/users/doctors/${doctorId}`, {
-          headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error("Failed to fetch doctor profile");
-        const data = await response.json();
-        
-        return data;
-      } catch (error) {
-        console.error("Error fetching doctor profile:", error);
-        return null;
-      }
-    },
-    [getAuthHeaders]
-  );
+  const refreshAppointments = useCallback(() => {
+    // ✅ For MVP testing: Show ALL appointments to any doctor account
+    // This allows testing with 2 accounts on one device - any patient's appointments will show
+    const allAppointments = readLocalAppointments();
+    
+    // Normalize and sort all appointments
+    const normalized = allAppointments
+      .map(normalizeLocalAppointment)
+      .filter(Boolean);
+    
+    // Sort by date/time
+    const sorted = normalized.sort((a, b) => {
+      const getTime = (apt) => {
+        const date = apt.slot?.start || apt.start;
+        if (date) {
+          const value = new Date(date).getTime();
+          if (!Number.isNaN(value)) return value;
+        }
+        if (apt.date && apt.time) {
+          return new Date(`${apt.date}T${apt.time}`).getTime();
+        }
+        if (apt.date) {
+          return new Date(`${apt.date}T00:00:00`).getTime();
+        }
+        return apt.createdAt ? new Date(apt.createdAt).getTime() : 0;
+      };
+      return getTime(a) - getTime(b);
+    });
+    
+    const data = sorted.map((apt) => ({
+      ...apt,
+      id: apt.localId || apt.appointmentId || apt.id,
+      statusMeta: apt.statusMeta || getStatusMeta(apt.status),
+    }));
+    
+    setAppointments(data);
+  }, []); // ✅ No dependencies - showing all appointments
 
-  // PUT /api/appointments/{patientId}/{appointmentId}/confirm
-  const confirmAppointment = useCallback(
-    async (patientId, appointmentId) => {
-      try {
-        const response = await fetch(
-          `${API_BASE}/appointments/${patientId}/${appointmentId}/confirm`,
-          {
-            method: "PUT",
-            headers: getAuthHeaders(),
-          }
-        );
-        return response.ok;
-      } catch (error) {
-        console.error("Error confirming appointment:", error);
-        return false;
-      }
-    },
-    [getAuthHeaders]
-  );
+  useEffect(() => {
+    refreshAppointments();
+  }, [refreshAppointments]);
 
-  // PUT /api/appointments/{patientId}/{appointmentId}/decline
-  const declineAppointment = useCallback(
-    async (patientId, appointmentId) => {
-      try {
-        const response = await fetch(
-          `${API_BASE}/appointments/${patientId}/${appointmentId}/decline`,
-          {
-            method: "PUT",
-            headers: getAuthHeaders(),
-          }
-        );
-        return response.ok;
-      } catch (error) {
-        console.error("Error declining appointment:", error);
-        return false;
-      }
-    },
-    [getAuthHeaders]
-  );
-
-  // DELETE /api/appointments/{patientId}/{appointmentId}/cancel
-  const cancelAppointment = useCallback(
-    async (patientId, appointmentId) => {
-      try {
-        const response = await fetch(
-          `${API_BASE}/appointments/${patientId}/${appointmentId}/cancel`,
-          {
-            method: "DELETE",
-            headers: getAuthHeaders(),
-          }
-        );
-        return response.ok;
-      } catch (error) {
-        console.error("Error canceling appointment:", error);
-        return false;
-      }
-    },
-    [getAuthHeaders]
-  );
-
-  // POST /api/appointments - Book new appointment (for reschedule simulation)
-  const rescheduleAppointment = useCallback(
-    async (appointmentData) => {
-      try {
-        const response = await fetch(`${API_BASE}/appointments`, {
-          method: "POST",
-          headers: getAuthHeaders(),
-          body: JSON.stringify(appointmentData),
-        });
-        return response.ok;
-      } catch (error) {
-        console.error("Error rescheduling appointment:", error);
-        return false;
-      }
-    },
-    [getAuthHeaders]
-  );
-
-  // Sample data fallback (remove when APIs are ready)
-  const fallbackPatients = useMemo(
-    () => [
-      { id: 1, name: "Ahmad Mansour", patientId: "P001" },
-      { id: 2, name: "Rania Sabbagh", patientId: "P002" },
-      { id: 3, name: "Maya Haddad", patientId: "P003" },
-    ],
-    []
-  );
-
-  const fallbackWeeklyAppointments = useMemo(
-    () => [
-      {
-        id: 1,
-        patientName: "Ahmad Mansour",
-        patientId: 1,
-        type: "Consultation",
-        time: "09:00 AM",
-        status: "confirmed",
-        day: "Today",
-      },
-      {
-        id: 2,
-        patientName: "Rania Sabbagh",
-        patientId: 2,
-        type: "Follow-up",
-        time: "10:30 AM",
-        status: "pending",
-        day: "Today",
-      },
-    ],
-    []
-  );
-
-  const fallbackFeedback = useMemo(
-    () => [
-      {
-        id: 1,
-        patientName: "Ahmad Mansour",
-        patientId: 1,
-        rating: 5,
-        comment: "Excellent care...",
-      },
-    ],
-    []
-  );
-
-  // Stats calculation
-  const stats = useMemo(() => {
-    const today = new Date().toISOString().split("T")[0];
-    // NOTE: In a real app, `apt.date` must be consistent (e.g., YYYY-MM-DD) for this filter to work correctly.
-    const todayAppointmentsList = appointments.filter(
-      (apt) => apt.date === today
-    );
-
-    return {
-      todayAppointments: todayAppointmentsList.length,
-      weeklyAppointments: appointments.length,
-      totalPatients: doctorProfile?.totalPatients || fallbackPatients.length,
-      averageRating: doctorProfile?.avgRating || 4.7,
-      todayAppointmentsList: todayAppointmentsList,
-      weeklyAppointmentsList: fallbackWeeklyAppointments,
-      patientsList: fallbackPatients,
-      feedback: fallbackFeedback,
-    };
-  }, [
-    appointments,
-    doctorProfile,
-    fallbackPatients,
-    fallbackWeeklyAppointments,
-    fallbackFeedback,
-  ]);
-
-  // Event handlers
   const handlePatientNavigation = useCallback(
-    (patientId, e) => {
-      if (e) e.stopPropagation();
-      navigate(`/patients/${patientId}`);
+    (patientId) => {
+      if (!patientId) return;
+      navigate(`/patient/${patientId}/profile`);
     },
     [navigate]
   );
@@ -260,171 +164,132 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
     }
   }, []);
 
+  const applyStatusChange = useCallback(
+    (appointmentId, status) => {
+      if (!appointmentId) return;
+      updateLocalAppointment(appointmentId, {
+        status,
+      });
+      refreshAppointments();
+    },
+    [refreshAppointments]
+  );
+
+  const pendingAppointments = useMemo(
+    () => appointments.filter((apt) => apt.status === "REQUESTED"),
+    [appointments]
+  );
+
+  const upcomingAppointments = useMemo(
+    () => appointments.filter((apt) => apt.statusMeta?.includeInUpcoming !== false),
+    [appointments]
+  );
+
+  const stats = useMemo(() => {
+    const uniquePatients = new Map();
+    upcomingAppointments.forEach((apt) => {
+      if (!uniquePatients.has(apt.patientId)) {
+        uniquePatients.set(apt.patientId, {
+          id: apt.patientId || apt.localId,
+          name: apt.patientName || "Patient",
+        });
+      }
+    });
+
+    return {
+      todayAppointments: pendingAppointments.length,
+      weeklyAppointments: upcomingAppointments.length,
+      totalPatients: uniquePatients.size,
+      averageRating: 4.7,
+      todayAppointmentsList: pendingAppointments,
+      weeklyAppointmentsList: upcomingAppointments,
+      patientsList: [...uniquePatients.values()],
+      feedback: [],
+    };
+  }, [pendingAppointments, upcomingAppointments]);
+
   const prepareAction = useCallback(
-    (apptId, action) => {
-      const appt = appointments.find((a) => a.id === apptId);
-      if (!appt) return;
+    (appointmentId, action) => {
+      const appointment = appointments.find((apt) => apt.id === appointmentId);
+      if (!appointment) return;
 
       if (action === "Reschedule") {
         setRescheduleModal({
           visible: true,
-          appointmentId: apptId,
-          appointmentName: appt.patientName,
-          newDate: "",
-          newTime: "",
+          appointmentId,
+          appointmentName: appointment.patientName || "Patient",
+          newDate: appointment.date || "",
+          newTime: appointment.time || appointment.timeLabel || "",
         });
         return;
       }
 
-      const text = `Are you sure you want to ${action.toLowerCase()} appointment for ${
-        appt.patientName
+      const text = `Are you sure you want to ${action.toLowerCase()} the appointment for ${
+        appointment.patientName || "this patient"
       }?`;
-      setModal({ visible: true, action, appointmentId: apptId, text });
+      setModal({ visible: true, action, appointmentId, text });
     },
     [appointments]
   );
 
-  const confirmModal = useCallback(async () => {
-    const appointment = appointments.find((a) => a.id === modal.appointmentId);
-    if (!appointment) return;
-
-    let success = false;
+  const confirmModal = useCallback(() => {
+    if (!modal.visible || !modal.appointmentId) {
+      setModal(INITIAL_MODAL_STATE);
+      return;
+    }
 
     switch (modal.action) {
       case "Accept":
-        success = await confirmAppointment(
-          appointment.patientId,
-          modal.appointmentId
-        );
+        applyStatusChange(modal.appointmentId, "CONFIRMED");
         break;
       case "Decline":
-        success = await declineAppointment(
-          appointment.patientId,
-          modal.appointmentId
-        );
+        applyStatusChange(modal.appointmentId, "DECLINED");
         break;
       case "Cancel":
-        success = await cancelAppointment(
-          appointment.patientId,
-          modal.appointmentId
-        );
+        applyStatusChange(modal.appointmentId, "CANCELLED");
         break;
       default:
         break;
     }
 
-    if (success) {
-      setAppointments((prev) => {
-        if (modal.action === "Accept") {
-          return prev.map((a) =>
-            a.id === modal.appointmentId ? { ...a, status: "confirmed" } : a
-          );
-        }
-        // Decline/Cancel removes the appointment from the list
-        return prev.filter((a) => a.id !== modal.appointmentId);
-      });
+    setModal(INITIAL_MODAL_STATE);
+  }, [modal, applyStatusChange]);
+
+  const confirmReschedule = useCallback(() => {
+    const { appointmentId, newDate, newTime } = rescheduleModal;
+    if (!appointmentId) {
+      setRescheduleModal(INITIAL_RESCHEDULE_STATE);
+      return;
     }
-    setModal({ visible: false, action: "", appointmentId: null, text: "" });
-  }, [
-    modal,
-    appointments,
-    confirmAppointment,
-    declineAppointment,
-    cancelAppointment,
-  ]);
 
-  const confirmReschedule = useCallback(async () => {
-    const appointment = appointments.find(
-      (a) => a.id === rescheduleModal.appointmentId
-    );
-    if (!appointment) return;
-
-    // Create new appointment data for reschedule
-    // NOTE: This logic assumes rescheduling creates a *new* entry in the backend.
-    // A more common approach might be an UPDATE on the existing one.
-    const rescheduleData = {
-      patientId: appointment.patientId,
-      doctorId: 1, // Current doctor ID
-      date: rescheduleModal.newDate,
-      time: rescheduleModal.newTime,
-      type: appointment.type,
-      status: "rescheduled",
-    };
-
-    const success = await rescheduleAppointment(rescheduleData);
-
-    if (success) {
-      // Update the original appointment to reflect the new status/details
-      setAppointments((prev) =>
-        prev.map((a) =>
-          a.id === rescheduleModal.appointmentId
-            ? {
-                ...a,
-                status: "rescheduled",
-                time: rescheduleModal.newTime, // Update time/date
-                date: rescheduleModal.newDate,
-              }
-            : a
-        )
-      );
-    }
-    setRescheduleModal({
-      visible: false,
-      appointmentId: null,
-      appointmentName: "",
-      newDate: "",
-      newTime: "",
-    });
-  }, [rescheduleModal, appointments, rescheduleAppointment]);
-
-  // Load initial data
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        const doctorId = 1; // This should come from authentication context
-
-        // Fetch doctor appointments
-        const appointmentsData = await fetchDoctorAppointments(doctorId);
-        setAppointments(appointmentsData);
-
-        // Fetch doctor profile for ratings and stats
-        const profileData = await fetchDoctorProfile(doctorId);
-        setDoctorProfile(profileData);
-      } catch (error) {
-        console.error("Error loading dashboard data:", error);
-
-        // Fallback data if API fails
-        setAppointments([
-          {
-            id: 1,
-            patientName: "Ahmad Mansour",
-            patientId: 1,
-            type: "Consultation",
-            time: "09:00 AM",
-            status: "confirmed",
-            date: new Date().toISOString().split("T")[0],
-          },
-          {
-            id: 2,
-            patientName: "Rania Sabbagh",
-            patientId: 2,
-            type: "Follow-up",
-            time: "10:30 AM",
-            status: "pending",
-            date: new Date().toISOString().split("T")[0],
-          },
-        ]);
+    updateLocalAppointment(appointmentId, (current) => {
+      const startIso = toIsoString(newDate || current.date, newTime || current.time || current.timeLabel);
+      let endIso = current.slot?.end;
+      if (startIso) {
+        const endDate = new Date(new Date(startIso).getTime() + 30 * 60 * 1000);
+        endIso = endDate.toISOString();
       }
-    };
 
-    loadDashboardData();
-  }, [fetchDoctorAppointments, fetchDoctorProfile]);
+      return {
+        status: "RESCHEDULED",
+        date: newDate || current.date,
+        time: newTime || current.time || current.timeLabel,
+        timeLabel: newTime || current.timeLabel || current.time,
+        slot: {
+          ...(current.slot || {}),
+          start: startIso || current.slot?.start,
+          end: endIso,
+        },
+      };
+    });
 
-  // Greeting and time
+    refreshAppointments();
+    setRescheduleModal(INITIAL_RESCHEDULE_STATE);
+  }, [rescheduleModal, refreshAppointments]);
+
   const now = useMemo(() => new Date(), []);
   const hour = now.getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   const motivationalByDay = useMemo(() => {
     const messages = [
@@ -446,7 +311,7 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
         <div className="dashboard-header">
           <div>
             <p className="greeting">
-              {greeting}, <span className="doctor-highlight">{username}</span>
+              {greeting}, <span className="doctor-highlight">{doctorName}</span>
             </p>
             <p className="motivational">{motivationalByDay}</p>
 
@@ -455,24 +320,22 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
                 specialties.map((s, i) => (
                   <span key={i} className="specialty-item">
                     Specialty: {s.name || "N/A"} — Price: ${s.price ?? "N/A"} — Years: {s.yearsExperience ?? "N/A"} — Major: {s.major ? "Yes" : "No"}
-                    <br /> </span>
+                    <br />
+                  </span>
                 ))
               ) : (
-                <span> No specialties saved </span>
+                <span>No specialties saved</span>
               )}
-              <span className="dashboard-date"><br /> <br /> Date: {now.toLocaleDateString()}</span>
+              <span className="dashboard-date">
+                <br />
+                <br /> Date: {now.toLocaleDateString()}
+              </span>
             </div>
           </div>
         </div>
 
-
-
         <div className="section-container">
-          <DoctorQuickActions
-            onShowAppointments={() => setShowAppointments(!showAppointments)}
-            showAppointments={showAppointments}
-            onNavigate={navigate}
-          />
+          <DoctorQuickActions onNavigate={navigate} />
         </div>
 
         <div className="section-container">
@@ -484,51 +347,33 @@ const DoctorDashboard = ({ showDropList, setShowDropList }) => {
           />
         </div>
 
-        {/* Conditional Rendering for Appointments Manager (Full Toggle) */}
         {showAppointments && (
           <div className="section-container">
             <DoctorAppointmentsManager
-              appointments={stats.todayAppointmentsList}
+              appointments={pendingAppointments}
               onAppointmentAction={prepareAction}
-              onPatientNavigation={handlePatientNavigation} // Use the consolidated handler
+              onPatientNavigation={handlePatientNavigation}
               onHideAppointments={() => setShowAppointments(false)}
             />
           </div>
         )}
 
-        {/* Modal for Accept/Decline/Cancel */}
         {modal.visible && (
           <Modal
             title={`Confirm ${modal.action}`}
             message={modal.text}
             onConfirm={confirmModal}
-            onCancel={() =>
-              setModal({
-                visible: false,
-                action: "",
-                appointmentId: null,
-                text: "",
-              })
-            }
+            onCancel={() => setModal(INITIAL_MODAL_STATE)}
           />
         )}
 
-        {/* Reschedule Modal */}
         <RescheduleModal
           visible={rescheduleModal.visible}
           appointmentName={rescheduleModal.appointmentName}
           newDate={rescheduleModal.newDate}
           newTime={rescheduleModal.newTime}
           onConfirm={confirmReschedule}
-          onCancel={() =>
-            setRescheduleModal({
-              visible: false,
-              appointmentId: null,
-              appointmentName: "",
-              newDate: "",
-              newTime: "",
-            })
-          }
+          onCancel={() => setRescheduleModal(INITIAL_RESCHEDULE_STATE)}
           onDateChange={(e) =>
             setRescheduleModal((prev) => ({ ...prev, newDate: e.target.value }))
           }

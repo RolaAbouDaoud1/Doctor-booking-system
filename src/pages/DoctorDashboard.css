@@ -18,6 +18,48 @@
   margin-top: 1rem;
 }
 
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--slate-light);
+  color: var(--white);
+}
+
+.status.pending {
+  background: var(--coral);
+}
+
+.status.confirmed {
+  background: var(--teal);
+}
+
+.status.rescheduled {
+  background: var(--mint);
+}
+
+.status.declined {
+  background: #f97316;
+}
+
+.status.cancelled {
+  background: #64748b;
+}
+
+.status.completed {
+  background: #22c55e;
+}
+
+.icon-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .search-input-wrapper {
   position: relative;
   margin-bottom: 1rem;

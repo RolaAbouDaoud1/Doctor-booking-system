@@ -9,8 +9,12 @@ import "./SharedDashboard.css";
 import "./WellnessModal.css";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-
-const API_BASE = "http://localhost:8080/api";
+import {
+  getAppointmentsForPatient,
+  removeLocalAppointment,
+  updateLocalAppointment,
+  getStatusMeta,
+} from "../utils/offlineAppointments";
 
 const PatientDashboard = ({ showDropList, setShowDropList }) => {
   const [modalData, setModalData] = useState(null);
@@ -23,123 +27,39 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
   const [showAppointments, setShowAppointments] = useState(false); // Toggle state
   const navigate = useNavigate();
 
-  // Get auth headers with token
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("authToken");
-    return {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    };
-  };
-
-  // REAL API CALLS FROM YOUR PDF DOCUMENTATION
-
-  // GET /api/appointments/patient/{patientId}
-  const fetchPatientAppointments = useCallback(async (patientId) => {
+  const token = Cookies.get("token");
+  const decodedToken = useMemo(() => {
+    if (!token) return null;
     try {
-      const response = await fetch(
-        `${API_BASE}/appointments/patient/${patientId}`,
-        {
-          headers: getAuthHeaders(),
-        }
-      );
-      if (!response.ok) throw new Error("Failed to fetch appointments");
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-      return [];
-    }
-  }, []);
-
-  // DELETE /api/appointments/{patientId}/{appointmentId}/cancel
-  const cancelAppointment = useCallback(async (patientId, appointmentId) => {
-    try {
-      const response = await fetch(
-        `${API_BASE}/appointments/${patientId}/${appointmentId}/cancel`,
-        {
-          method: "DELETE",
-          headers: getAuthHeaders(),
-        }
-      );
-      return response.ok;
-    } catch (error) {
-      console.error("Error canceling appointment:", error);
-      return false;
-    }
-  }, []);
-
-  // GET /api/users/patients/{id} - Patient profile
-  const fetchPatientProfile = useCallback(async (patientId) => {
-    try {
-      const response = await fetch(`${API_BASE}/users/patients/${patientId}`, {
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) throw new Error("Failed to fetch patient profile");
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching patient profile:", error);
+      return jwtDecode(token);
+    } catch (err) {
+      console.warn("Failed to decode auth token", err);
       return null;
     }
-  }, []);
+  }, [token]);
 
-  // POST /api/appointments - Book new appointment
-  const bookAppointment = useCallback(async (appointmentData) => {
-    try {
-      const response = await fetch(`${API_BASE}/appointments`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(appointmentData),
-      });
-      return response.ok;
-    } catch (error) {
-      console.error("Error booking appointment:", error);
-      return false;
-    }
-  }, []);
+  const patientId = useMemo(() => {
+    if (decodedToken?.id != null) return String(decodedToken.id);
+    const stored = localStorage.getItem("patientId");
+    return stored ? String(stored) : null;
+  }, [decodedToken]);
 
-  // PUT /api/appointments/{appointmentId}/reschedule - Reschedule appointment
-  const rescheduleAppointment = useCallback(
-    async (appointmentId, newDate, newTime) => {
-      try {
-        const response = await fetch(
-          `${API_BASE}/appointments/${appointmentId}/reschedule`,
-          {
-            method: "PUT",
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ newDate, newTime }),
-          }
-        );
-        return response.ok;
-      } catch (error) {
-        console.error("Error rescheduling appointment:", error);
-        return false;
-      }
-    },
-    []
-  );
+  const refreshAppointments = useCallback(() => {
+    const activePatientId = patientId || localStorage.getItem("patientId") || "1";
+    setAppointments(getAppointmentsForPatient(activePatientId));
+  }, [patientId]);
 
   // Load initial data
   useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        const patientId = 1; // This should come from authentication context
+    const loadDashboardData = () => {
+      refreshAppointments();
 
-        // Fetch appointments and profile from real APIs
-        const [appointmentsData, profileData] = await Promise.all([
-          fetchPatientAppointments(patientId),
-          fetchPatientProfile(patientId),
-        ]);
-
-        setAppointments(appointmentsData || []);
-        setPatientProfile(profileData);
-        setMedicalDocuments([]);
-      } catch (error) {
-        console.error("Error loading dashboard data:", error);
-        setAppointments([]);
-        setMedicalDocuments([]);
-      }
+      const profile = {
+        fullName: localStorage.getItem("username") || "Patient",
+        email: localStorage.getItem("userEmail") || "",
+      };
+      setPatientProfile(profile);
+      setMedicalDocuments([]);
     };
 
     loadDashboardData();
@@ -160,7 +80,7 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
       "Rest is part of the healing process.",
     ];
     setMessage(messages[new Date().getDate() % messages.length]);
-  }, [fetchPatientAppointments, fetchPatientProfile]);
+  }, [patientId, refreshAppointments]);
 
   // Dropdown management
   const toggleDropdown = (key, event) => {
@@ -190,6 +110,11 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [openDropdown]);
 
+  const visibleAppointments = useMemo(
+    () => appointments.filter((apt) => apt.statusMeta?.includeInUpcoming !== false),
+    [appointments]
+  );
+
   // Stats calculation
   const stats = useMemo(() => {
     const medicalReports = medicalDocuments.filter(
@@ -205,68 +130,48 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
 
 
     return {
-      upcomingAppointments: appointments.length,
+      upcomingAppointments: visibleAppointments.length,
       medicalRecords: medicalReports,
       activePrescriptions: prescriptions,
       pendingResults: pendingLabResults,
     };
-  }, [appointments, medicalDocuments]);
+  }, [visibleAppointments, medicalDocuments]);
 
   // Appointment handlers
   const handleCancel = async (appointment) => {
-    const patientId = 1;
-    const success = await cancelAppointment(
-      patientId,
-      appointment.appointmentId
-    );
-
-    if (success) {
-      setAppointments((prev) =>
-        prev.filter((a) => a.appointmentId !== appointment.appointmentId)
-      );
+    if (!appointment) return;
+    const targetId = appointment.localId || appointment.appointmentId;
+    if (!targetId) {
+      setModalData(null);
+      return;
     }
+
+    const statusMeta = getStatusMeta(appointment.status);
+    if (statusMeta.allowCancel) {
+      updateLocalAppointment(targetId, { status: "CANCELLED" });
+    } else {
+      removeLocalAppointment(targetId);
+    }
+
+    refreshAppointments();
     setModalData(null);
   };
 
-  const handleReschedule = async (appointment) => {
+  const handleReschedule = (appointment) => {
     setModalData(null);
+    if (!appointment) return;
 
-    const newDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0];
-    const newTime = "10:00 AM";
+    const targetId = appointment.localId || appointment.appointmentId;
+    if (targetId) {
+      updateLocalAppointment(targetId, { status: "CANCELLED" });
+      refreshAppointments();
+    }
 
-    const success = await rescheduleAppointment(
-      appointment.appointmentId,
-      newDate,
-      newTime
-    );
-
-    if (success) {
-      setAppointments((prev) =>
-        prev.map((a) =>
-          a.appointmentId === appointment.appointmentId
-            ? { ...a, date: newDate, time: newTime }
-            : a
-        )
-      );
-
-      navigate("/search", {
-        state: {
-          message: "Appointment rescheduled successfully!",
-          rescheduledAppointment: {
-            ...appointment,
-            date: newDate,
-            time: newTime,
-          },
-        },
-      });
+    const destinationDoctorId = appointment.doctorId || appointment.id;
+    if (destinationDoctorId) {
+      navigate(`/book/${destinationDoctorId}`);
     } else {
-      navigate("/search", {
-        state: {
-          error: "Failed to reschedule appointment. Please try again.",
-        },
-      });
+      navigate("/search");
     }
   };
 
@@ -333,12 +238,15 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
   const openModal = (type, appointment) => setModalData({ type, appointment });
   const closeModal = () => setModalData(null);
 
-  const getDoctorInitials = (doctorName) => {
-    return doctorName
+  const getDoctorInitials = (doctorName = "") => {
+    const parts = doctorName
       .split(" ")
-      .slice(1)
-      .map((n) => n[0])
-      .join("");
+      .filter(Boolean);
+    if (parts.length === 0) return "DR";
+    if (parts.length === 1) return parts[0][0]?.toUpperCase() || "D";
+    const first = parts[0][0] || "";
+    const last = parts[parts.length - 1][0] || "";
+    return `${first}${last}`.toUpperCase();
   };
 
   // Get today's date in a nice format
@@ -348,9 +256,43 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     month: "long",
     day: "numeric",
   });
-const token = Cookies.get("token");
-const decoded = jwtDecode(token);
-const namefromToken = decoded.name;
+  
+  // ✅ Get patient name from multiple sources with priority
+  const displayName = useMemo(() => {
+    // Priority 1: Check JWT token for fullName or name
+    if (decodedToken?.fullName) return decodedToken.fullName;
+    if (decodedToken?.name) return decodedToken.name;
+    
+    // Priority 2: Check localStorage for fullName
+    const storedFullName = localStorage.getItem("fullName");
+    if (storedFullName && storedFullName !== "User") return storedFullName;
+    
+    // Priority 3: Check patientTotal in localStorage (from registration)
+    try {
+      const patientTotal = localStorage.getItem("patientTotal");
+      if (patientTotal) {
+        const parsed = JSON.parse(patientTotal);
+        if (parsed.fullName) return parsed.fullName;
+        if (parsed.username && parsed.username !== "User") return parsed.username;
+      }
+    } catch (e) {
+      console.warn("Could not parse patientTotal:", e);
+    }
+    
+    // Priority 4: Check username in localStorage
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername && storedUsername !== "User" && storedUsername !== "Patient") {
+      return storedUsername;
+    }
+    
+    // Priority 5: Check patientProfile state (set in useEffect)
+    if (patientProfile?.fullName && patientProfile.fullName !== "Patient") {
+      return patientProfile.fullName;
+    }
+    
+    // Fallback: return "Patient" only if nothing else is available
+    return "Patient";
+  }, [decodedToken, patientProfile]);
 
 return (
     <>
@@ -361,7 +303,7 @@ return (
             <h1 className="greeting">
               {greeting},{" "}
               <span className="patient-highlight">
-                {decoded.name|| "test"}!
+                {displayName}!
               </span>
             </h1>
             <p className="date-display">📅{todayDate} </p>
@@ -383,7 +325,7 @@ return (
             onNavigate={navigate}
             openDropdown={openDropdown}
             onDropdownToggle={toggleDropdown}
-            appointments={appointments}
+            appointments={visibleAppointments}
             medicalDocuments={medicalDocuments}
             showAppointments={showAppointments} // Pass the state to show active indicator
           />
@@ -401,55 +343,93 @@ return (
                 </button>
               </div>
 
-              {appointments.length === 0 ? (
+              {visibleAppointments.length === 0 ? (
                 <div className="no-appointments">
                   <p>
                     No upcoming appointments. Book your first appointment today!
                   </p>
                 </div>
               ) : (
-                appointments.map((apt) => (
-                  <div className="appointment" key={apt.appointmentId}>
-                    <div className="appt-info">
-                      <div className="appt-avatar teal">
-                        {getDoctorInitials(apt.doctorName)}
+                visibleAppointments.map((apt) => {
+                  const key = apt.appointmentId || apt.localId || apt.id;
+                  const isOffline = Boolean(apt.isOffline);
+                  const doctorName = apt.doctorName || "Pending Doctor";
+                  const doctorId = apt.doctorId || apt.id;
+                  const displayDate = apt.date
+                    ? new Date(apt.date).toLocaleDateString()
+                    : apt.slot?.start
+                    ? new Date(apt.slot.start).toLocaleDateString()
+                    : null;
+                  const displayTime = apt.timeLabel || apt.time || (apt.slot?.start
+                    ? new Date(apt.slot.start).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+                    : "--");
+                  const statusMeta = apt.statusMeta || getStatusMeta(apt.status);
+                  const badgeClass = statusMeta.badgeClass || (isOffline ? "pending" : "confirmed");
+                  const statusLabel = statusMeta.label || (isOffline ? "Pending" : "Scheduled");
+                  const canReschedule = Boolean(statusMeta.allowReschedule);
+                  const canCancel = Boolean(statusMeta.allowCancel);
+
+                  return (
+                    <div
+                      className={`appointment ${isOffline ? "appointment-offline" : ""}`}
+                      key={key}
+                    >
+                      <div className="appt-info">
+                        <div className="appt-avatar teal">
+                          {getDoctorInitials(doctorName)}
+                        </div>
+                        <div>
+                          <p
+                            className={`doctor-name link ${!doctorId ? "disabled" : ""}`}
+                            onClick={() => {
+                              if (doctorId) {
+                                navigate(`/doctor-profile/${doctorId}`);
+                              }
+                            }}
+                          >
+                            {doctorName}
+                          </p>
+                          <div className="doctor-spec">
+                            {apt.specialty || "General"}
+                            <span className={`status-badge ${badgeClass}`}>
+                              {statusLabel}
+                            </span>
+                          </div>
+                          <p className="doctor-time">{displayTime}</p>
+                          {displayDate && (
+                            <p className="appointment-date">{displayDate}</p>
+                          )}
+                          {apt.offlineError && statusMeta.badgeClass === "pending" && (
+                            <p className="offline-error">
+                              Last error: {apt.offlineError}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p
-                          className="doctor-name link"
-                          onClick={() =>
-                            navigate(
-                              `/doctor-profile/${apt.doctorId || apt.id}`
-                            )
+                      <div className="appt-actions">
+                        <button
+                          className="appt-btn coral"
+                          onClick={() => canReschedule && openModal("reschedule", apt)}
+                          disabled={!canReschedule}
+                          title={
+                            canReschedule
+                              ? "Reschedule"
+                              : "This appointment can no longer be rescheduled"
                           }
                         >
-                          {apt.doctorName}
-                        </p>
-                        <p className="doctor-spec">{apt.specialty}</p>
-                        <p className="doctor-time">{apt.time}</p>
-                        {apt.date && (
-                          <p className="appointment-date">
-                            {new Date(apt.date).toLocaleDateString()}
-                          </p>
-                        )}
+                          Reschedule
+                        </button>
+                        <button
+                          className="appt-btn gray"
+                          onClick={() => canCancel && openModal("cancel", apt)}
+                          disabled={!canCancel}
+                        >
+                          {canCancel ? "Cancel" : "Remove"}
+                        </button>
                       </div>
                     </div>
-                    <div className="appt-actions">
-                      <button
-                        className="appt-btn coral"
-                        onClick={() => openModal("reschedule", apt)}
-                      >
-                        Reschedule
-                      </button>
-                      <button
-                        className="appt-btn gray"
-                        onClick={() => openModal("cancel", apt)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </>
           )}

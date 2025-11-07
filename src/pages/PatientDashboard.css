@@ -100,6 +100,12 @@
   border-left: 4px solid var(--mint);
 }
 
+.appointment-offline {
+  border-left-style: dashed;
+  border-left-color: var(--coral);
+  background: rgba(230, 57, 70, 0.05);
+}
+
 .appointment-item, .weekly-appointment-item {
   display: flex;
   align-items: center;
@@ -115,6 +121,12 @@
 .appointment-item:hover, .weekly-appointment-item:hover {
   background: rgba(0,109,119,0.05);
   transform: translateX(4px);
+}
+
+.appointment-item.offline {
+  border-style: dashed;
+  border-color: rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.06);
 }
 
 .appointment-time-badge, .day-badge {
@@ -145,6 +157,22 @@
 
 .status-badge.pending {
   background: var(--coral);
+}
+
+.status-badge.rescheduled {
+  background: var(--mint);
+}
+
+.status-badge.declined {
+  background: #f97316;
+}
+
+.status-badge.cancelled {
+  background: #64748b;
+}
+
+.status-badge.completed {
+  background: #22c55e;
 }
 
 .appt-info {
@@ -197,6 +225,12 @@
   margin-top: 0.25rem;
 }
 
+.offline-error {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--coral);
+}
+
 .appointment-specialty {
   font-size: 11px;
   color: var(--muted);
@@ -236,6 +270,16 @@
 .appt-btn.coral { background: var(--coral); }
 .appt-btn.gray { background: var(--slate-light); }
 
+.appt-btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.appt-btn[disabled]:hover {
+  opacity: 0.55;
+}
+
 .appointments-dropdown .appointment-avatar-small {
   width: 32px;
   height: 32px;
@@ -272,6 +316,19 @@
 .doctor-name-link:hover {
   color: var(--teal-hover);
   text-decoration: underline;
+}
+
+.doctor-name.link.disabled,
+.doctor-name-link.disabled {
+  color: var(--muted);
+  cursor: default;
+  text-decoration: none;
+}
+
+.doctor-name.link.disabled:hover,
+.doctor-name-link.disabled:hover {
+  color: var(--muted);
+  text-decoration: none;
 }
 
 .appointment-meta {

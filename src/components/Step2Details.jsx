@@ -1,5 +1,25 @@
+const Step2Details = ({
+  appointment,
+  setAppointment,
+  nextStep,
+  prevStep,
+  doctor,
+  doctorLoading,
+  doctorError,
+}) => {
+  const doctorName = doctor?.fullName || doctor?.name || "Dr. Layla Khoury";
+  const doctorSpecialty =
+    (doctor?.specialties && (doctor.specialties[0]?.name || doctor.specialties[0])) || "Cardiology";
+  const doctorPrice = doctor?.price || "$150";
+  const doctorInitials = doctor?.initials
+    ? doctor.initials
+    : doctorName
+        .split(" ")
+        .filter(Boolean)
+        .map((word) => word[0].toUpperCase())
+        .slice(0, 2)
+        .join("") || "DR";
 
-const Step2Details = ({ appointment, setAppointment, nextStep , prevStep }) => {
   return (
     <div className="appointment-container">
     <div className="book-card">
@@ -14,12 +34,14 @@ const Step2Details = ({ appointment, setAppointment, nextStep , prevStep }) => {
   </div>
 
       <div className="doctor-info">
-        <div className="avatar">LK</div>
+        <div className="avatar">{doctorInitials}</div>
         <div className="doc-details">
-          <h3 className="name-doc">Dr. Layla Khoury</h3>
-          <small>Cardiology</small>
+          <h3 className="name-doc">
+            {doctorLoading ? "Loading doctor..." : doctorError ? "Doctor unavailable" : doctorName}
+          </h3>
+          <small>{doctorLoading ? "Fetching specialty..." : doctorSpecialty}</small>
         </div>
-        <div className="price">$150</div>
+        <div className="price">{doctorPrice}</div>
       </div>
 
 
@@ -51,9 +73,10 @@ const Step2Details = ({ appointment, setAppointment, nextStep , prevStep }) => {
           }
         >
           <option value="">Select Case Type</option>
-          <option value="CHECKUP">Checkup</option>
+          <option value="GENERAL_CHECKUP">General Checkup</option>
           <option value="BLOOD_TEST">Blood Test</option>
           <option value="FOLLOW_UP">Follow-up</option>
+          <option value="OTHER">Other</option>
         </select>
 
         <label>Priority *</label>

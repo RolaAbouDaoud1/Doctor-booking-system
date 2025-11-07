@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PatientRecordsManager from './PatientRecordsManager';
+import { getStatusMeta } from "../utils/offlineAppointments";
 
 const DoctorOverviewStats = ({ 
   stats, 
@@ -98,26 +99,31 @@ const DoctorOverviewStats = ({
                   </div>
                   {stats.todayAppointmentsList?.length ? (
                     <div className="appointments-list">
-                      {stats.todayAppointmentsList.map(apt => (
-                        <div key={apt.id} className="appointment-item">
-                          <div className="appointment-time-badge">{apt.time}</div>
-                          <div className="appointment-info">
-                            <button 
-                              className="patient-name-link" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onPatientNavigation(apt.patientId, e);
-                              }}
-                            >
-                              <strong>{apt.patientName}</strong>
-                            </button>
-                            <div className="appointment-meta">
-                              <span className="appointment-type">{apt.type}</span>
-                              <span className={`status-badge ${apt.status}`}>{apt.status}</span>
+                      {stats.todayAppointmentsList.map((apt) => {
+                        const statusMeta = apt.statusMeta || getStatusMeta(apt.status);
+                        return (
+                          <div key={apt.id} className="appointment-item">
+                            <div className="appointment-time-badge">{apt.time}</div>
+                            <div className="appointment-info">
+                              <button
+                                className="patient-name-link"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onPatientNavigation(apt.patientId, e);
+                                }}
+                              >
+                                <strong>{apt.patientName}</strong>
+                              </button>
+                              <div className="appointment-meta">
+                                <span className="appointment-type">{apt.type}</span>
+                                <span className={`status-badge ${statusMeta.badgeClass || "pending"}`}>
+                                  {statusMeta.label}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <p className="empty-state">No appointments scheduled for today</p>

@@ -188,7 +188,7 @@ export default function NavBarLg({
                   <Stethoscope className="w-6 h-6 text-white relative z-10 group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
                 </div>
               </div>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white group-hover:scale-105 transition-transform duration-300 hidden sm:inline">
+              <span className="text-2xl font-bold text-teal-600 dark:text-teal-400 group-hover:scale-105 transition-transform duration-300 hidden sm:inline">
                 Health<span className="text-teal-600 dark:text-teal-400">Connect</span>
               </span>
             </Link>
@@ -278,7 +278,7 @@ export default function NavBarLg({
 
         {/* Mobile Menu - Fixed with max-height and overflow */}
         {showDropList && (
-          <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 animate-slide-down max-h-96 overflow-y-auto">
+          <div className="lg:hidden bg-white border-t border-gray-200 dark:border-gray-800 animate-slide-down max-h-96 overflow-y-auto">
             <div className="px-2 py-2 space-y-0.5">
               {navArray.map((item, index) =>
                 item.text === "Logout" ? (
@@ -291,8 +291,8 @@ export default function NavBarLg({
                     className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group hover:scale-[1.02]"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-red-50 dark:group-hover:bg-red-900/20 group-hover:scale-110 transition-all duration-300">
-                        <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400 group-hover:rotate-12 transition-all duration-300" strokeWidth={2} />
+                      <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-teal-800 flex items-center justify-center group-hover:bg-red-50 dark:group-hover:bg-red-900/20 group-hover:scale-110 transition-all duration-300">
+                        <item.icon className="w-4 h-4 text-gray-600 dark:text-teal-400 group-hover:text-red-600 dark:group-hover:text-red-400 group-hover:rotate-12 transition-all duration-300" strokeWidth={2} />
                       </div>
                       <span className="text-sm font-medium">{item.text}</span>
                     </div>
@@ -308,7 +308,7 @@ export default function NavBarLg({
                     className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-teal-900/10 hover:text-teal-600 dark:hover:text-teal-400 transition-all duration-200 group hover:scale-[1.02]"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-teal-50 dark:group-hover:bg-teal-900/20 group-hover:scale-110 transition-all duration-300">
+                      <div className="w-8 h-8 rounded-lg bg-gray-100  flex items-center justify-center group-hover:bg-teal-50 dark:group-hover:bg-teal-900/20 group-hover:scale-110 transition-all duration-300">
                         <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 group-hover:scale-110 transition-all duration-300" strokeWidth={2} />
                       </div>
                       <span className="text-sm font-medium">{item.text}</span>

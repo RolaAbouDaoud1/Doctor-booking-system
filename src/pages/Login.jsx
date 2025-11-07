@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBarLg from "../components/sections/NavBarLg";
 import "./design.css";
 import Cookies from "js-cookie";
-import * as jwtDecode from "jwt-decode"; // ✅ Vite-compatible import
+import { jwtDecode } from "jwt-decode"; // Changed from: import * as jwtDecode from "jwt-decode";
 
 export default function LoginPage({ showDropList, setShowDropList }) {
   const navigate = useNavigate();
@@ -38,9 +38,18 @@ export default function LoginPage({ showDropList, setShowDropList }) {
       const data = await res.json();
 
       if (res.ok) {
-        const decoded = jwtDecode.default(data.token); 
+        const decoded = jwtDecode(data.token);
         const userId = decoded.id || data.id || null;
         const nameFromToken = decoded.name || "User";
+        const fullNameFromToken = decoded.fullName || decoded.name || nameFromToken; // ✅ Get fullName if available
+
+        // Debug logging for MVP testing
+        console.log("🔐 Login Debug:");
+        console.log("  - Decoded token:", decoded);
+        console.log("  - User ID from token:", userId);
+        console.log("  - Role selected:", role);
+        console.log("  - User name:", nameFromToken);
+        console.log("  - Full name:", fullNameFromToken);
 
         // Save cookies and localStorage
         Cookies.set("token", data.token, { secure: true, sameSite: "Strict" });
@@ -49,18 +58,42 @@ export default function LoginPage({ showDropList, setShowDropList }) {
 
         localStorage.setItem("registrationToken", data.token);
         localStorage.setItem("userRole", role);
+        localStorage.setItem("role", role);
+        localStorage.setItem("loggedIn", "true");
         localStorage.setItem("username", nameFromToken);
+        localStorage.setItem("fullName", fullNameFromToken); // ✅ Store fullName separately
 
-        if (role === "Doctor" && userId) localStorage.setItem("doctorId", userId);
-        if (role === "Patient" && userId) localStorage.setItem("patientId", userId);
+        if (role === "Doctor" && userId) {
+          localStorage.setItem("doctorId", String(userId));
+          console.log("✅ Doctor ID saved to localStorage:", String(userId));
+        } else if (role === "Doctor" && !userId) {
+          console.warn("⚠️ Warning: Doctor role selected but no userId found in token!");
+          console.warn("  - Decoded token keys:", Object.keys(decoded || {}));
+          console.warn("  - Data keys:", Object.keys(data || {}));
+        }
+        
+        if (role === "Patient" && userId) {
+          localStorage.setItem("patientId", String(userId));
+          console.log("✅ Patient ID saved to localStorage:", String(userId));
+        }
+
+        // Verify what was saved
+        console.log("📦 localStorage after login:");
+        console.log("  - loggedIn:", localStorage.getItem("loggedIn"));
+        console.log("  - role:", localStorage.getItem("role"));
+        console.log("  - username:", localStorage.getItem("username"));
+        console.log("  - fullName:", localStorage.getItem("fullName")); // ✅ Log fullName
+        console.log("  - doctorId:", localStorage.getItem("doctorId"));
+        console.log("  - patientId:", localStorage.getItem("patientId"));
 
         navigate("/");
       } else {
         alert(data.message || "Login failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong");
+      console.error("❌ Login error:", err);
+      console.error("  - Error details:", err.message);
+      alert("Something went wrong: " + err.message);
     }
   };
 

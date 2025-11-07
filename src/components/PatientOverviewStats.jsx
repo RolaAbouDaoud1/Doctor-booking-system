@@ -1,9 +1,15 @@
 import React from "react";
+import { getStatusMeta } from "../utils/offlineAppointments";
 
 const PatientOverviewStats = ({ stats, onNavigate, openDropdown, onDropdownToggle, appointments = [], medicalDocuments = [] }) => {
   
-  const getDoctorInitials = (doctorName) => {
-    return doctorName.split(" ").slice(1).map(n => n[0]).join("");
+  const getDoctorInitials = (doctorName = "") => {
+    const parts = doctorName.split(" ").filter(Boolean);
+    if (parts.length === 0) return "DR";
+    if (parts.length === 1) return parts[0][0]?.toUpperCase() || "D";
+    const first = parts[0][0] || "";
+    const last = parts[parts.length - 1][0] || "";
+    return `${first}${last}`.toUpperCase();
   };
 
   // Count different types of medical documents
@@ -31,25 +37,36 @@ const PatientOverviewStats = ({ stats, onNavigate, openDropdown, onDropdownToggl
               </div>
               {appointments.length > 0 ? (
                 <div className="appointments-list">
-                  {appointments.map(apt => (
-                    <div key={apt.appointmentId} className="appointment-item">
-                      <div className="appointment-avatar-small">
-                        {getDoctorInitials(apt.doctorName)}
-                      </div>
-                      <div className="appointment-info">
-                        <button 
-                          className="doctor-name-link" 
-                          onClick={() => onNavigate(`/doctor-profile/${apt.doctorId || apt.id}`)}
-                        >
-                          <strong>{apt.doctorName}</strong>
-                        </button>
-                        <div className="appointment-meta">
-                          <span className="appointment-specialty">{apt.specialty}</span>
-                          <span className="appointment-time">{apt.time}</span>
+                  {appointments.map((apt) => {
+                    const key = apt.appointmentId || apt.localId || apt.id;
+                    const doctorName = apt.doctorName || "Pending Doctor";
+                    const doctorId = apt.doctorId || apt.id;
+                    const statusMeta = apt.statusMeta || getStatusMeta(apt.status);
+                    const displayTime = apt.timeLabel || apt.time || "--";
+
+                    return (
+                      <div key={key} className={`appointment-item ${statusMeta.badgeClass === "pending" ? "offline" : ""}`}>
+                        <div className="appointment-avatar-small">
+                          {getDoctorInitials(doctorName)}
+                        </div>
+                        <div className="appointment-info">
+                          <button
+                            className={`doctor-name-link ${!doctorId ? "disabled" : ""}`}
+                            onClick={() => doctorId && onNavigate(`/doctor-profile/${doctorId}`)}
+                          >
+                            <strong>{doctorName}</strong>
+                          </button>
+                          <div className="appointment-meta">
+                            <span className="appointment-specialty">{apt.specialty || "General"}</span>
+                            <span className="appointment-time">{displayTime}</span>
+                            <span className={`status-badge ${statusMeta.badgeClass || "pending"}`}>
+                              {statusMeta.label}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="empty-state">No upcoming appointments</p>
