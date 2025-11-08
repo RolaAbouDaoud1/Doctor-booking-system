@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import Step1SelectDate from "../components/Step1SelectDate";
 import Step2Details from "../components/Step2Details";
 import Step3Summary from "../components/Step3Summary";
+import NavBarLg from "../components/sections/NavBarLg";
 import "./BookAppointment.css";
 
 export default function BookAppointment() {
@@ -128,37 +129,40 @@ export default function BookAppointment() {
   const prevStep = () => setStep(step - 1);
 
   return (
-    <div className="book-container">
-      {step === 1 && (
-        <Step1SelectDate
-          appointment={appointment}
-          setAppointment={setAppointment}
-          nextStep={nextStep}
-          doctor={doctor}
-          doctorId={resolvedDoctorId}
-          doctorLoading={doctorLoading}
-          doctorError={doctorError}
-        />
-      )}
-      {step === 2 && (
-        <Step2Details
-          appointment={appointment}
-          setAppointment={setAppointment}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          doctor={doctor}
-          doctorLoading={doctorLoading}
-          doctorError={doctorError}
-        />
-      )}
-      {step === 3 && (
-        <Step3Summary
-          appointment={appointment}
-          prevStep={prevStep}
-          doctor={doctor}
-          doctorId={resolvedDoctorId}
-        />
-      )}
-    </div>
+    <>
+      <NavBarLg />
+      <div className="book-container">
+        {step === 1 && (
+          <Step1SelectDate
+            appointment={appointment}
+            setAppointment={setAppointment}
+            nextStep={nextStep}
+            doctor={doctor}
+            doctorId={resolvedDoctorId}
+            doctorLoading={doctorLoading}
+            doctorError={doctorError}
+          />
+        )}
+        {step === 2 && (
+          <Step2Details
+            appointment={appointment}
+            setAppointment={setAppointment}
+            nextStep={nextStep}
+            prevStep={prevStep}
+            doctor={doctor}
+            doctorLoading={doctorLoading}
+            doctorError={doctorError}
+          />
+        )}
+        {step === 3 && (
+          <Step3Summary
+            appointment={appointment}
+            prevStep={prevStep}
+            doctor={doctor}
+            doctorId={resolvedDoctorId}
+          />
+        )}
+      </div>
+    </>
   );
 }

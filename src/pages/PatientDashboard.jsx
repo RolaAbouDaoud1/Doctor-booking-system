@@ -127,8 +127,6 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
       (doc) => doc.type === "lab_result" && doc.status === "pending"
     ).length;
 
-
-
     return {
       upcomingAppointments: visibleAppointments.length,
       medicalRecords: medicalReports,
@@ -175,34 +173,10 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     }
   };
 
-  const handleBookAppointment = async () => {
-    const newAppointmentData = {
-      patientId: 1,
-      doctorId: 1,
-      date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
-      time: "02:00 PM",
-      type: "Consultation",
-      status: "pending",
-    };
-
-    const success = await bookAppointment(newAppointmentData);
-
-    if (success) {
-      navigate("/book/:doctorId", {
-        state: {
-          message: "Ready to book a new appointment!",
-          prefillData: newAppointmentData,
-        },
-      });
-    } else {
-      navigate("/book/:doctorId", {
-        state: {
-          error: "Unable to prepare appointment booking. Please try again.",
-        },
-      });
-    }
+  const handleBookAppointment = () => {
+    // Navigate to the book appointment page with a default doctor ID
+    // You can modify this to navigate to a doctor selection page first if needed
+    navigate("/book/1"); // Using "1" as a default doctor ID
   };
 
   const handleFindDoctors = () => {
@@ -294,7 +268,7 @@ const PatientDashboard = ({ showDropList, setShowDropList }) => {
     return "Patient";
   }, [decodedToken, patientProfile]);
 
-return (
+  return (
     <>
       <NavBarLg setShowDropList={setShowDropList} showDropList={showDropList} />
       <div className="dashboard bg-color">

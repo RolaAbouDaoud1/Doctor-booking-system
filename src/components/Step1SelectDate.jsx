@@ -41,14 +41,14 @@ const Step1SelectDate = ({
     );
   }, [doctor?.doctorId, doctor?.id, params.doctorId, params.id, propDoctorId]);
 
-  // Generate next 7 days dynamically (value = YYYY-MM-DD, label = human readable)
+  // Generate next 7 days dynamically
   useEffect(() => {
     const today = new Date();
     const next7Days = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
-      const value = d.toISOString().split("T")[0]; // 2025-10-30
+      const value = d.toISOString().split("T")[0];
       const label = d.toLocaleDateString("en-US", {
         weekday: "short",
         month: "short",
@@ -164,7 +164,7 @@ const Step1SelectDate = ({
       );
       if (!response.ok) throw new Error("Failed to fetch slots");
       const data = await response.json();
-      // expecting array of { date: "YYYY-MM-DD", times: [...] } or similar
+
       const normalizedTimes = [];
 
       const tryPush = (entry) => {
@@ -207,8 +207,6 @@ const Step1SelectDate = ({
     } finally {
       setLoading(false);
     }
-
-    // no return cleanup from this async helper
   };
 
   const doctorName = doctor?.fullName || doctor?.name || "Dr. Name";
@@ -241,89 +239,107 @@ const Step1SelectDate = ({
         </div>
       </div>
 
-      <div className="doctor-info">
-        <div className="avatar">{doctor?.initials || doctorInitials}</div>
-        <div className="doc-details">
-          <h3>
-            {doctorLoading ? "Loading doctor..." : doctorError ? "Doctor unavailable" : doctorName}
-          </h3>
-          <small>
-            {doctorLoading
-              ? "Fetching specialty..."
-              : doctorError
-              ? "Unknown specialty"
-              : doctorSpecialty}
-          </small>
-        </div>
-        <div className="price">{doctorPrice}</div>
-      </div>
-
-      <div className="section">
-        <h4>Select Date</h4>
-        <div className="date-grid">
-          {dates.map((d) => (
-            <button
-              key={d.value}
-              className={appointment?.date === d.value ? "date-btn active" : "date-btn"}
-              onClick={() => {
-                setAppointment({ ...appointment, date: d.value, time: null, timeLabel: null, slotId: null });
-                fetchAvailableTimes(d.value); // fetch times for selected date
-              }}
-              type="button"
-            >
-              {d.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* show loader when fetching */}
-      {loading && (
-        <div className="section">
-          <p>Loading available times…</p>
-        </div>
-      )}
-
-      {/* show available times after selecting a date */}
-      {appointment?.date && !loading && (
-        <div className="section">
-          <h4>Available Times</h4>
-          <div className="time-grid">
-            {times.length ? (
-              times.map((t) => (
-                <button
-                  key={t.id || t.value}
-                  className={appointment?.time === t.value ? "time-btn active" : "time-btn"}
-                  onClick={() =>
-                    setAppointment({
-                      ...appointment,
-                      time: t.value,
-                      timeLabel: t.label,
-                      slotId: t.id || t.value,
-                    })
-                  }
-                  type="button"
-                >
-                  {t.label}
-                </button>
-              ))
-            ) : (
-              <div className="text-gray-500">No slots available for this date</div>
-            )}
+      <div className="appointment-main-content">
+        {/* Doctor Info Card - Left Side */}
+        <div className="doctor-info">
+          <div className="avatar">{doctor?.initials || doctorInitials}</div>
+          <div className="doc-details">
+            <h3>
+              {doctorLoading ? "Loading..." : doctorError ? "Doctor unavailable" : doctorName}
+            </h3>
+            <small>
+              {doctorLoading
+                ? "Fetching specialty..."
+                : doctorError
+                ? "Unknown specialty"
+                : doctorSpecialty}
+            </small>
+          </div>
+          <div className="price">{doctorPrice}</div>
+          
+          {/* Cancellation Policy */}
+          <div className="cancellation-policy">
+            <div className="info-icon">i</div>
+            <span>Cancellation Policy</span>
+            <div className="policy-tooltip">
+              <h4>Booking & Cancellation Policy</h4>
+              <p>
+                Free cancellation up to 24 hours before your appointment. Late cancellations or no-shows may incur a fee. Please arrive 10 minutes early for your scheduled time.
+              </p>
+            </div>
           </div>
         </div>
-      )}
 
-      <button
-        className="next-btn"
-        onClick={() => {
-          if (appointment?.date && appointment?.time) nextStep();
-          else alert("Please select date and time");
-        }}
-        type="button"
-      >
-        Next
-      </button>
+        {/* Date and Time Selection - Right Side */}
+        <div className="appointment-sections">
+          <div className="section">
+            <h4>Select Date</h4>
+            <div className="date-grid">
+              {dates.map((d) => (
+                <button
+                  key={d.value}
+                  className={appointment?.date === d.value ? "date-btn active" : "date-btn"}
+                  onClick={() => {
+                    setAppointment({ ...appointment, date: d.value, time: null, timeLabel: null, slotId: null });
+                    fetchAvailableTimes(d.value);
+                  }}
+                  type="button"
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {loading && (
+            <div className="section">
+              <p style={{ color: "#475569", textAlign: "center", padding: "20px 0" }}>Loading available times…</p>
+            </div>
+          )}
+
+          {appointment?.date && !loading && (
+            <div className="section">
+              <h4>Available Times</h4>
+              <div className="time-grid">
+                {times.length ? (
+                  times.map((t) => (
+                    <button
+                      key={t.id || t.value}
+                      className={appointment?.time === t.value ? "time-btn active" : "time-btn"}
+                      onClick={() =>
+                        setAppointment({
+                          ...appointment,
+                          time: t.value,
+                          timeLabel: t.label,
+                          slotId: t.id || t.value,
+                        })
+                      }
+                      type="button"
+                    >
+                      {t.label}
+                    </button>
+                  ))
+                ) : (
+                  <div style={{ color: "#94a3b8", gridColumn: "1 / -1", textAlign: "center", padding: "20px 0" }}>
+                    No slots available for this date
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <button
+            className="next-btn"
+            onClick={() => {
+              if (appointment?.date && appointment?.time) nextStep();
+              else alert("Please select date and time");
+            }}
+            type="button"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
